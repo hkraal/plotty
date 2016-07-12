@@ -2,8 +2,9 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-        <title>Slim 3</title>
+        <title>Plotty</title>
         <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+	<script src="https://use.fontawesome.com/efdfda4849.js"></script>
         <style>
             body {
                 margin: 50px 0 0 0;
@@ -13,20 +14,26 @@
                 text-align: center;
                 color: #aaa;
                 font-size: 18px;
+		background-color: #030303;
             }
 
             h1 {
-                color: #719e40;
+                color: #e65100;
                 letter-spacing: -3px;
                 font-family: 'Lato', sans-serif;
                 font-size: 100px;
                 font-weight: 200;
                 margin-bottom: 0;
             }
+
+	    a {
+		text-decoration: none;
+		color: #e65100;
+	    }
         </style>
     </head>
     <body>
-        <h1>Plotty</h1>
+        <h1><i class="fa fa-share-alt" aria-hidden="true"></i> Plotty</h1>
         <div>a wormhole probing tool for EVE-Online players</div>
 
         <?php if (isset($name)) : ?>
