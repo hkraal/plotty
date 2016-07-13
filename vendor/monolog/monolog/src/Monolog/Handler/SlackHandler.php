@@ -24,49 +24,49 @@ class SlackHandler extends SocketHandler
 
     /**
      * Slack API token
-     * 
+     *
      * @var string
      */
     private $token;
 
     /**
      * Slack channel (encoded ID or name)
-     * 
+     *
      * @var string
      */
     private $channel;
 
     /**
      * Name of a bot
-     * 
+     *
      * @var string
      */
     private $username;
 
     /**
      * Emoji icon name
-     * 
+     *
      * @var string
      */
     private $iconEmoji;
 
     /**
      * Whether the message should be added to Slack as attachment (plain text otherwise)
-     * 
+     *
      * @var bool
      */
     private $useAttachment;
 
     /**
      * Whether the the context/extra messages added to Slack as attachments are in a short style
-     * 
+     *
      * @var bool
      */
     private $useShortAttachment;
 
     /**
      * Whether the attachment should include context and extra data
-     * 
+     *
      * @var bool
      */
     private $includeContextAndExtra;

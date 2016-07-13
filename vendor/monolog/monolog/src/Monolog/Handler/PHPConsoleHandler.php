@@ -65,8 +65,8 @@ class PHPConsoleHandler extends AbstractProcessingHandler
         'dumperDumpSizeLimit' => 500000, // int Maximum approximate size of dumped vars result formatted in JSON
         'detectDumpTraceAndSource' => false, // bool Autodetect and append trace data to debug
         'dataStorage' => null
-    ) // PhpConsole\Storage|null Fixes problem with custom $_SESSION handler(see http://goo.gl/Ne8juJ)
-;
+    ); // PhpConsole\Storage|null Fixes problem with custom $_SESSION handler(see http://goo.gl/Ne8juJ)
+
 
     /** @var Connector */
     private $connector;

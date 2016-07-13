@@ -38,7 +38,7 @@ class HandlerWrapper implements HandlerInterface
 
     /**
      * HandlerWrapper constructor.
-     * 
+     *
      * @param HandlerInterface $handler            
      */
     public function __construct(HandlerInterface $handler)

@@ -22,7 +22,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * @covers Monolog\Handler\PHPConsoleHandler
- * 
+ *
  * @author Sergey Barbushin https://www.linkedin.com/in/barbushin
  */
 class PHPConsoleHandlerTest extends TestCase

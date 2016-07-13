@@ -62,7 +62,7 @@ class Router implements RouterInterface
 
     /**
      * Route counter incrementer
-     * 
+     *
      * @var int
      */
     protected $routeCounter = 0;

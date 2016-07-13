@@ -15,7 +15,7 @@ class DeferredCallable
 
     /**
      * DeferredMiddleware constructor.
-     * 
+     *
      * @param callable|string $callable            
      * @param ContainerInterface $container            
      */

@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class PhpRenderer
- * 
+ *
  * @package Slim\Views
  *         
  *          Render PHP view scripts into a PSR-7 Response object

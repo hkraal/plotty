@@ -237,7 +237,7 @@ class ElasticSearchHandlerTest extends TestCase
 
     /**
      * Return last created document id from ES response
-     * 
+     *
      * @param Response $response
      *            Elastica Response object
      * @return string|null
@@ -252,7 +252,7 @@ class ElasticSearchHandlerTest extends TestCase
 
     /**
      * Retrieve document by id from Elasticsearch
-     * 
+     *
      * @param Client $client
      *            Elastica client
      * @param string $index            

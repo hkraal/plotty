@@ -66,8 +66,8 @@ class ElasticSearchHandler extends AbstractProcessingHandler
             'index' => 'monolog', // Elastic index name
             'type' => 'record', // Elastic document type
             'ignore_error' => false
-        ) // Suppress Elastica exceptions
-, $options);
+        ), // Suppress Elastica exceptions
+$options);
     }
 
     /**
@@ -97,7 +97,7 @@ class ElasticSearchHandler extends AbstractProcessingHandler
 
     /**
      * Getter options
-     * 
+     *
      * @return array
      */
     public function getOptions()
@@ -128,7 +128,7 @@ class ElasticSearchHandler extends AbstractProcessingHandler
 
     /**
      * Use Elasticsearch bulk API to send list of documents
-     * 
+     *
      * @param array $documents            
      * @throws \RuntimeException
      */
