@@ -8,24 +8,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
 use Monolog\TestCase;
 
 class WebProcessorTest extends TestCase
 {
+
     public function testProcessor()
     {
         $server = array(
-            'REQUEST_URI'    => 'A',
-            'REMOTE_ADDR'    => 'B',
+            'REQUEST_URI' => 'A',
+            'REMOTE_ADDR' => 'B',
             'REQUEST_METHOD' => 'C',
-            'HTTP_REFERER'   => 'D',
-            'SERVER_NAME'    => 'F',
-            'UNIQUE_ID'      => 'G',
+            'HTTP_REFERER' => 'D',
+            'SERVER_NAME' => 'F',
+            'UNIQUE_ID' => 'G'
         );
-
+        
         $processor = new WebProcessor($server);
         $record = $processor($this->getRecord());
         $this->assertEquals($server['REQUEST_URI'], $record['extra']['url']);
@@ -39,8 +39,8 @@ class WebProcessorTest extends TestCase
     public function testProcessorDoNothingIfNoRequestUri()
     {
         $server = array(
-            'REMOTE_ADDR'    => 'B',
-            'REQUEST_METHOD' => 'C',
+            'REMOTE_ADDR' => 'B',
+            'REQUEST_METHOD' => 'C'
         );
         $processor = new WebProcessor($server);
         $record = $processor($this->getRecord());
@@ -50,10 +50,10 @@ class WebProcessorTest extends TestCase
     public function testProcessorReturnNullIfNoHttpReferer()
     {
         $server = array(
-            'REQUEST_URI'    => 'A',
-            'REMOTE_ADDR'    => 'B',
+            'REQUEST_URI' => 'A',
+            'REMOTE_ADDR' => 'B',
             'REQUEST_METHOD' => 'C',
-            'SERVER_NAME'    => 'F',
+            'SERVER_NAME' => 'F'
         );
         $processor = new WebProcessor($server);
         $record = $processor($this->getRecord());
@@ -63,10 +63,10 @@ class WebProcessorTest extends TestCase
     public function testProcessorDoesNotAddUniqueIdIfNotPresent()
     {
         $server = array(
-            'REQUEST_URI'    => 'A',
-            'REMOTE_ADDR'    => 'B',
+            'REQUEST_URI' => 'A',
+            'REMOTE_ADDR' => 'B',
             'REQUEST_METHOD' => 'C',
-            'SERVER_NAME'    => 'F',
+            'SERVER_NAME' => 'F'
         );
         $processor = new WebProcessor($server);
         $record = $processor($this->getRecord());
@@ -76,31 +76,41 @@ class WebProcessorTest extends TestCase
     public function testProcessorAddsOnlyRequestedExtraFields()
     {
         $server = array(
-            'REQUEST_URI'    => 'A',
-            'REMOTE_ADDR'    => 'B',
+            'REQUEST_URI' => 'A',
+            'REMOTE_ADDR' => 'B',
             'REQUEST_METHOD' => 'C',
-            'SERVER_NAME'    => 'F',
+            'SERVER_NAME' => 'F'
         );
-
-        $processor = new WebProcessor($server, array('url', 'http_method'));
+        
+        $processor = new WebProcessor($server, array(
+            'url',
+            'http_method'
+        ));
         $record = $processor($this->getRecord());
-
-        $this->assertSame(array('url' => 'A', 'http_method' => 'C'), $record['extra']);
+        
+        $this->assertSame(array(
+            'url' => 'A',
+            'http_method' => 'C'
+        ), $record['extra']);
     }
 
     public function testProcessorConfiguringOfExtraFields()
     {
         $server = array(
-            'REQUEST_URI'    => 'A',
-            'REMOTE_ADDR'    => 'B',
+            'REQUEST_URI' => 'A',
+            'REMOTE_ADDR' => 'B',
             'REQUEST_METHOD' => 'C',
-            'SERVER_NAME'    => 'F',
+            'SERVER_NAME' => 'F'
         );
-
-        $processor = new WebProcessor($server, array('url' => 'REMOTE_ADDR'));
+        
+        $processor = new WebProcessor($server, array(
+            'url' => 'REMOTE_ADDR'
+        ));
         $record = $processor($this->getRecord());
-
-        $this->assertSame(array('url' => 'B'), $record['extra']);
+        
+        $this->assertSame(array(
+            'url' => 'B'
+        ), $record['extra']);
     }
 
     /**
@@ -108,6 +118,6 @@ class WebProcessorTest extends TestCase
      */
     public function testInvalidData()
     {
-        new WebProcessor(new \stdClass);
+        new WebProcessor(new \stdClass());
     }
 }

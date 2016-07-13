@@ -1,118 +1,227 @@
 <?php
-
 namespace FastRoute\RouteParser;
 
-class StdTest extends \PhpUnit_Framework_TestCase {
-    /** @dataProvider provideTestParse */
-    public function testParse($routeString, $expectedRouteDatas) {
+class StdTest extends \PhpUnit_Framework_TestCase
+{
+
+    /**
+     * @dataProvider provideTestParse
+     */
+    public function testParse($routeString, $expectedRouteDatas)
+    {
         $parser = new Std();
         $routeDatas = $parser->parse($routeString);
         $this->assertSame($expectedRouteDatas, $routeDatas);
     }
 
-    /** @dataProvider provideTestParseError */
-    public function testParseError($routeString, $expectedExceptionMessage) {
+    /**
+     * @dataProvider provideTestParseError
+     */
+    public function testParseError($routeString, $expectedExceptionMessage)
+    {
         $parser = new Std();
         $this->setExpectedException('FastRoute\\BadRouteException', $expectedExceptionMessage);
         $parser->parse($routeString);
     }
 
-    public function provideTestParse() {
+    public function provideTestParse()
+    {
         return [
             [
                 '/test',
                 [
-                    ['/test'],
+                    [
+                        '/test'
+                    ]
                 ]
             ],
             [
                 '/test/{param}',
                 [
-                    ['/test/', ['param', '[^/]+']],
+                    [
+                        '/test/',
+                        [
+                            'param',
+                            '[^/]+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/te{ param }st',
                 [
-                    ['/te', ['param', '[^/]+'], 'st']
+                    [
+                        '/te',
+                        [
+                            'param',
+                            '[^/]+'
+                        ],
+                        'st'
+                    ]
                 ]
             ],
             [
                 '/test/{param1}/test2/{param2}',
                 [
-                    ['/test/', ['param1', '[^/]+'], '/test2/', ['param2', '[^/]+']]
+                    [
+                        '/test/',
+                        [
+                            'param1',
+                            '[^/]+'
+                        ],
+                        '/test2/',
+                        [
+                            'param2',
+                            '[^/]+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/test/{param:\d+}',
                 [
-                    ['/test/', ['param', '\d+']]
+                    [
+                        '/test/',
+                        [
+                            'param',
+                            '\d+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/test/{ param : \d{1,9} }',
                 [
-                    ['/test/', ['param', '\d{1,9}']]
+                    [
+                        '/test/',
+                        [
+                            'param',
+                            '\d{1,9}'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/test[opt]',
                 [
-                    ['/test'],
-                    ['/testopt'],
+                    [
+                        '/test'
+                    ],
+                    [
+                        '/testopt'
+                    ]
                 ]
             ],
             [
                 '/test[/{param}]',
                 [
-                    ['/test'],
-                    ['/test/', ['param', '[^/]+']],
+                    [
+                        '/test'
+                    ],
+                    [
+                        '/test/',
+                        [
+                            'param',
+                            '[^/]+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/{param}[opt]',
                 [
-                    ['/', ['param', '[^/]+']],
-                    ['/', ['param', '[^/]+'], 'opt']
+                    [
+                        '/',
+                        [
+                            'param',
+                            '[^/]+'
+                        ]
+                    ],
+                    [
+                        '/',
+                        [
+                            'param',
+                            '[^/]+'
+                        ],
+                        'opt'
+                    ]
                 ]
             ],
             [
                 '/test[/{name}[/{id:[0-9]+}]]',
                 [
-                    ['/test'],
-                    ['/test/', ['name', '[^/]+']],
-                    ['/test/', ['name', '[^/]+'], '/', ['id', '[0-9]+']],
+                    [
+                        '/test'
+                    ],
+                    [
+                        '/test/',
+                        [
+                            'name',
+                            '[^/]+'
+                        ]
+                    ],
+                    [
+                        '/test/',
+                        [
+                            'name',
+                            '[^/]+'
+                        ],
+                        '/',
+                        [
+                            'id',
+                            '[0-9]+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '',
                 [
-                    [''],
+                    [
+                        ''
+                    ]
                 ]
             ],
             [
                 '[test]',
                 [
-                    [''],
-                    ['test'],
+                    [
+                        ''
+                    ],
+                    [
+                        'test'
+                    ]
                 ]
             ],
             [
                 '/{foo-bar}',
                 [
-                    ['/', ['foo-bar', '[^/]+']]
+                    [
+                        '/',
+                        [
+                            'foo-bar',
+                            '[^/]+'
+                        ]
+                    ]
                 ]
             ],
             [
                 '/{_foo:.*}',
                 [
-                    ['/', ['_foo', '.*']]
+                    [
+                        '/',
+                        [
+                            '_foo',
+                            '.*'
+                        ]
+                    ]
                 ]
-            ],
+            ]
         ];
     }
 
-    public function provideTestParseError() {
+    public function provideTestParseError()
+    {
         return [
             [
                 '/test[opt',
@@ -141,7 +250,7 @@ class StdTest extends \PhpUnit_Framework_TestCase {
             [
                 '/test[/opt]/required',
                 "Optional segments can only occur at the end of a route"
-            ],
+            ]
         ];
     }
 }

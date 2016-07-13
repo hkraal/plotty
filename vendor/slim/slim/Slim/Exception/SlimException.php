@@ -20,6 +20,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class SlimException extends Exception
 {
+
     /**
      * A request object
      *
@@ -37,8 +38,8 @@ class SlimException extends Exception
     /**
      * Create new exception
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request            
+     * @param ResponseInterface $response            
      */
     public function __construct(ServerRequestInterface $request, ResponseInterface $response)
     {

@@ -8,17 +8,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\TestCase;
 
 /**
+ *
  * @author Alexey Karapetov <alexey@karapetov.com>
  */
 class HandlerWrapperTest extends TestCase
 {
+
     /**
+     *
      * @var HandlerWrapper
      */
     private $wrapper;
@@ -33,19 +35,25 @@ class HandlerWrapperTest extends TestCase
     }
 
     /**
+     *
      * @return array
      */
     public function trueFalseDataProvider()
     {
         return array(
-            array(true),
-            array(false),
+            array(
+                true
+            ),
+            array(
+                false
+            )
         );
     }
 
     /**
-     * @param $result
-     * @dataProvider trueFalseDataProvider
+     *
+     * @param $result @dataProvider
+     *            trueFalseDataProvider
      */
     public function testIsHandling($result)
     {
@@ -54,13 +62,14 @@ class HandlerWrapperTest extends TestCase
             ->method('isHandling')
             ->with($record)
             ->willReturn($result);
-
+        
         $this->assertEquals($result, $this->wrapper->isHandling($record));
     }
 
     /**
-     * @param $result
-     * @dataProvider trueFalseDataProvider
+     *
+     * @param $result @dataProvider
+     *            trueFalseDataProvider
      */
     public function testHandle($result)
     {
@@ -69,13 +78,14 @@ class HandlerWrapperTest extends TestCase
             ->method('handle')
             ->with($record)
             ->willReturn($result);
-
+        
         $this->assertEquals($result, $this->wrapper->handle($record));
     }
 
     /**
-     * @param $result
-     * @dataProvider trueFalseDataProvider
+     *
+     * @param $result @dataProvider
+     *            trueFalseDataProvider
      */
     public function testHandleBatch($result)
     {
@@ -84,7 +94,7 @@ class HandlerWrapperTest extends TestCase
             ->method('handleBatch')
             ->with($records)
             ->willReturn($result);
-
+        
         $this->assertEquals($result, $this->wrapper->handleBatch($records));
     }
 
@@ -94,7 +104,7 @@ class HandlerWrapperTest extends TestCase
         $this->handler->expects($this->once())
             ->method('pushProcessor')
             ->with($processor);
-
+        
         $this->assertEquals($this->wrapper, $this->wrapper->pushProcessor($processor));
     }
 
@@ -104,7 +114,7 @@ class HandlerWrapperTest extends TestCase
         $this->handler->expects($this->once())
             ->method('popProcessor')
             ->willReturn($processor);
-
+        
         $this->assertEquals($processor, $this->wrapper->popProcessor());
     }
 
@@ -114,7 +124,7 @@ class HandlerWrapperTest extends TestCase
         $this->handler->expects($this->once())
             ->method('setFormatter')
             ->with($formatter);
-
+        
         $this->assertEquals($this->wrapper, $this->wrapper->setFormatter($formatter));
     }
 
@@ -124,7 +134,7 @@ class HandlerWrapperTest extends TestCase
         $this->handler->expects($this->once())
             ->method('getFormatter')
             ->willReturn($formatter);
-
+        
         $this->assertEquals($formatter, $this->wrapper->getFormatter());
     }
 }

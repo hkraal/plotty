@@ -12,10 +12,11 @@ namespace Slim\Interfaces;
  * Collection Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface CollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 {
+
     public function set($key, $value);
 
     public function get($key, $default = null);

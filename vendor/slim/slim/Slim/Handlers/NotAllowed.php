@@ -21,13 +21,17 @@ use UnexpectedValueException;
  */
 class NotAllowed extends AbstractHandler
 {
+
     /**
      * Invoke error handler
      *
-     * @param  ServerRequestInterface $request  The most recent Request object
-     * @param  ResponseInterface      $response The most recent Response object
-     * @param  string[]               $methods  Allowed HTTP methods
-     *
+     * @param ServerRequestInterface $request
+     *            The most recent Request object
+     * @param ResponseInterface $response
+     *            The most recent Response object
+     * @param string[] $methods
+     *            Allowed HTTP methods
+     *            
      * @return ResponseInterface
      * @throws UnexpectedValueException
      */
@@ -44,12 +48,12 @@ class NotAllowed extends AbstractHandler
                 case 'application/json':
                     $output = $this->renderJsonNotAllowedMessage($methods);
                     break;
-
+                
                 case 'text/xml':
                 case 'application/xml':
                     $output = $this->renderXmlNotAllowedMessage($methods);
                     break;
-
+                
                 case 'text/html':
                     $output = $this->renderHtmlNotAllowedMessage($methods);
                     break;
@@ -57,61 +61,60 @@ class NotAllowed extends AbstractHandler
                     throw new UnexpectedValueException('Cannot render unknown content type ' . $contentType);
             }
         }
-
+        
         $body = new Body(fopen('php://temp', 'r+'));
         $body->write($output);
         $allow = implode(', ', $methods);
-
-        return $response
-                ->withStatus($status)
-                ->withHeader('Content-type', $contentType)
-                ->withHeader('Allow', $allow)
-                ->withBody($body);
+        
+        return $response->withStatus($status)
+            ->withHeader('Content-type', $contentType)
+            ->withHeader('Allow', $allow)
+            ->withBody($body);
     }
 
     /**
      * Render PLAIN not allowed message
      *
-     * @param  array                  $methods
+     * @param array $methods            
      * @return string
      */
     protected function renderPlainNotAllowedMessage($methods)
     {
         $allow = implode(', ', $methods);
-
+        
         return 'Allowed methods: ' . $allow;
     }
 
     /**
      * Render JSON not allowed message
      *
-     * @param  array                  $methods
+     * @param array $methods            
      * @return string
      */
     protected function renderJsonNotAllowedMessage($methods)
     {
         $allow = implode(', ', $methods);
-
+        
         return '{"message":"Method not allowed. Must be one of: ' . $allow . '"}';
     }
 
     /**
      * Render XML not allowed message
      *
-     * @param  array                  $methods
+     * @param array $methods            
      * @return string
      */
     protected function renderXmlNotAllowedMessage($methods)
     {
         $allow = implode(', ', $methods);
-
+        
         return "<root><message>Method not allowed. Must be one of: $allow</message></root>";
     }
 
     /**
      * Render HTML not allowed message
      *
-     * @param  array                  $methods
+     * @param array $methods            
      * @return string
      */
     protected function renderHtmlNotAllowedMessage($methods)
@@ -141,7 +144,7 @@ class NotAllowed extends AbstractHandler
     </body>
 </html>
 END;
-
+        
         return $output;
     }
 }

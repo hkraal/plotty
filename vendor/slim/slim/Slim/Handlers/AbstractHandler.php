@@ -15,6 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class AbstractHandler
 {
+
     /**
      * Known handled content types
      *
@@ -24,7 +25,7 @@ abstract class AbstractHandler
         'application/json',
         'application/xml',
         'text/xml',
-        'text/html',
+        'text/html'
     ];
 
     /**
@@ -34,18 +35,18 @@ abstract class AbstractHandler
      * Slim's error handling requirements. Consider a fully-feature solution such
      * as willdurand/negotiation for any other situation.
      *
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface $request            
      * @return string
      */
     protected function determineContentType(ServerRequestInterface $request)
     {
         $acceptHeader = $request->getHeaderLine('Accept');
         $selectedContentTypes = array_intersect(explode(',', $acceptHeader), $this->knownContentTypes);
-
+        
         if (count($selectedContentTypes)) {
             return current($selectedContentTypes);
         }
-
+        
         // handle +json and +xml specially
         if (preg_match('/\+(json|xml)/', $acceptHeader, $matches)) {
             $mediaType = 'application/' . $matches[1];
@@ -53,7 +54,7 @@ abstract class AbstractHandler
                 return $mediaType;
             }
         }
-
+        
         return 'text/html';
     }
 }

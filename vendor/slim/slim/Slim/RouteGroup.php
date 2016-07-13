@@ -18,11 +18,14 @@ use Slim\Interfaces\RouteGroupInterface;
  */
 class RouteGroup extends Routable implements RouteGroupInterface
 {
+
     /**
      * Create a new RouteGroup
      *
-     * @param string   $pattern  The pattern prefix for the group
-     * @param callable $callable The group callable
+     * @param string $pattern
+     *            The pattern prefix for the group
+     * @param callable $callable
+     *            The group callable
      */
     public function __construct($pattern, $callable)
     {
@@ -33,7 +36,8 @@ class RouteGroup extends Routable implements RouteGroupInterface
     /**
      * Invoke the group to register any Routable objects within it.
      *
-     * @param App $app The App to bind the callable to.
+     * @param App $app
+     *            The App to bind the callable to.
      */
     public function __invoke(App $app = null)
     {
@@ -41,7 +45,7 @@ class RouteGroup extends Routable implements RouteGroupInterface
         if ($callable instanceof Closure && $app !== null) {
             $callable = $callable->bindTo($app);
         }
-
+        
         $callable();
     }
 }

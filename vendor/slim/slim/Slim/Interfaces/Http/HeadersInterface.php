@@ -14,10 +14,11 @@ use Slim\Interfaces\CollectionInterface;
  * Headers Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface HeadersInterface extends CollectionInterface
 {
+
     public function add($key, $value);
 
     public function normalizeKey($key);

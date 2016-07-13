@@ -30,14 +30,16 @@ use Slim\Interfaces\RouterInterface;
  */
 class DefaultServicesProvider
 {
+
     /**
      * Register Slim's default services.
      *
-     * @param Container $container A DI container implementing ArrayAccess and container-interop.
+     * @param Container $container
+     *            A DI container implementing ArrayAccess and container-interop.
      */
     public function register($container)
     {
-        if (!isset($container['environment'])) {
+        if (! isset($container['environment'])) {
             /**
              * This service MUST return a shared instance
              * of \Slim\Interfaces\Http\EnvironmentInterface.
@@ -48,12 +50,12 @@ class DefaultServicesProvider
                 return new Environment($_SERVER);
             };
         }
-
-        if (!isset($container['request'])) {
+        
+        if (! isset($container['request'])) {
             /**
              * PSR-7 Request object
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return ServerRequestInterface
              */
@@ -61,29 +63,31 @@ class DefaultServicesProvider
                 return Request::createFromEnvironment($container->get('environment'));
             };
         }
-
-        if (!isset($container['response'])) {
+        
+        if (! isset($container['response'])) {
             /**
              * PSR-7 Response object
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return ResponseInterface
              */
             $container['response'] = function ($container) {
-                $headers = new Headers(['Content-Type' => 'text/html; charset=UTF-8']);
+                $headers = new Headers([
+                    'Content-Type' => 'text/html; charset=UTF-8'
+                ]);
                 $response = new Response(200, $headers);
-
+                
                 return $response->withProtocolVersion($container->get('settings')['httpVersion']);
             };
         }
-
-        if (!isset($container['router'])) {
+        
+        if (! isset($container['router'])) {
             /**
              * This service MUST return a SHARED instance
              * of \Slim\Interfaces\RouterInterface.
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return RouterInterface
              */
@@ -93,11 +97,11 @@ class DefaultServicesProvider
                     $routerCacheFile = $container->get('settings')['routerCacheFile'];
                 }
                 
-                return (new Router)->setCacheFile($routerCacheFile);
+                return (new Router())->setCacheFile($routerCacheFile);
             };
         }
-
-        if (!isset($container['foundHandler'])) {
+        
+        if (! isset($container['foundHandler'])) {
             /**
              * This service MUST return a SHARED instance
              * of \Slim\Interfaces\InvocationStrategyInterface.
@@ -105,11 +109,11 @@ class DefaultServicesProvider
              * @return InvocationStrategyInterface
              */
             $container['foundHandler'] = function () {
-                return new RequestResponse;
+                return new RequestResponse();
             };
         }
-
-        if (!isset($container['phpErrorHandler'])) {
+        
+        if (! isset($container['phpErrorHandler'])) {
             /**
              * This service MUST return a callable
              * that accepts three arguments:
@@ -121,7 +125,7 @@ class DefaultServicesProvider
              * The callable MUST return an instance of
              * \Psr\Http\Message\ResponseInterface.
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return callable
              */
@@ -129,8 +133,8 @@ class DefaultServicesProvider
                 return new PhpError($container->get('settings')['displayErrorDetails']);
             };
         }
-
-        if (!isset($container['errorHandler'])) {
+        
+        if (! isset($container['errorHandler'])) {
             /**
              * This service MUST return a callable
              * that accepts three arguments:
@@ -142,7 +146,7 @@ class DefaultServicesProvider
              * The callable MUST return an instance of
              * \Psr\Http\Message\ResponseInterface.
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return callable
              */
@@ -150,8 +154,8 @@ class DefaultServicesProvider
                 return new Error($container->get('settings')['displayErrorDetails']);
             };
         }
-
-        if (!isset($container['notFoundHandler'])) {
+        
+        if (! isset($container['notFoundHandler'])) {
             /**
              * This service MUST return a callable
              * that accepts two arguments:
@@ -165,11 +169,11 @@ class DefaultServicesProvider
              * @return callable
              */
             $container['notFoundHandler'] = function () {
-                return new NotFound;
+                return new NotFound();
             };
         }
-
-        if (!isset($container['notAllowedHandler'])) {
+        
+        if (! isset($container['notAllowedHandler'])) {
             /**
              * This service MUST return a callable
              * that accepts three arguments:
@@ -184,15 +188,15 @@ class DefaultServicesProvider
              * @return callable
              */
             $container['notAllowedHandler'] = function () {
-                return new NotAllowed;
+                return new NotAllowed();
             };
         }
-
-        if (!isset($container['callableResolver'])) {
+        
+        if (! isset($container['callableResolver'])) {
             /**
              * Instance of \Slim\Interfaces\CallableResolverInterface
              *
-             * @param Container $container
+             * @param Container $container            
              *
              * @return CallableResolverInterface
              */

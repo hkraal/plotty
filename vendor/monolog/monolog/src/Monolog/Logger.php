@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog;
 
 use Monolog\Handler\HandlerInterface;
@@ -26,6 +25,7 @@ use Psr\Log\InvalidArgumentException;
  */
 class Logger implements LoggerInterface
 {
+
     /**
      * Detailed debug information
      */
@@ -92,22 +92,24 @@ class Logger implements LoggerInterface
      * @var array $levels Logging levels
      */
     protected static $levels = array(
-        self::DEBUG     => 'DEBUG',
-        self::INFO      => 'INFO',
-        self::NOTICE    => 'NOTICE',
-        self::WARNING   => 'WARNING',
-        self::ERROR     => 'ERROR',
-        self::CRITICAL  => 'CRITICAL',
-        self::ALERT     => 'ALERT',
-        self::EMERGENCY => 'EMERGENCY',
+        self::DEBUG => 'DEBUG',
+        self::INFO => 'INFO',
+        self::NOTICE => 'NOTICE',
+        self::WARNING => 'WARNING',
+        self::ERROR => 'ERROR',
+        self::CRITICAL => 'CRITICAL',
+        self::ALERT => 'ALERT',
+        self::EMERGENCY => 'EMERGENCY'
     );
 
     /**
+     *
      * @var \DateTimeZone
      */
     protected static $timezone;
 
     /**
+     *
      * @var string
      */
     protected $name;
@@ -129,14 +131,19 @@ class Logger implements LoggerInterface
     protected $processors;
 
     /**
+     *
      * @var bool
      */
     protected $microsecondTimestamps = true;
 
     /**
-     * @param string             $name       The logging channel
-     * @param HandlerInterface[] $handlers   Optional stack of handlers, the first one in the array is called first, etc.
-     * @param callable[]         $processors Optional array of processors
+     *
+     * @param string $name
+     *            The logging channel
+     * @param HandlerInterface[] $handlers
+     *            Optional stack of handlers, the first one in the array is called first, etc.
+     * @param callable[] $processors
+     *            Optional array of processors
      */
     public function __construct($name, array $handlers = array(), array $processors = array())
     {
@@ -146,6 +153,7 @@ class Logger implements LoggerInterface
     }
 
     /**
+     *
      * @return string
      */
     public function getName()
@@ -162,20 +170,20 @@ class Logger implements LoggerInterface
     {
         $new = clone $this;
         $new->name = $name;
-
+        
         return $new;
     }
 
     /**
      * Pushes a handler on to the stack.
      *
-     * @param  HandlerInterface $handler
+     * @param HandlerInterface $handler            
      * @return $this
      */
     public function pushHandler(HandlerInterface $handler)
     {
         array_unshift($this->handlers, $handler);
-
+        
         return $this;
     }
 
@@ -186,10 +194,10 @@ class Logger implements LoggerInterface
      */
     public function popHandler()
     {
-        if (!$this->handlers) {
+        if (! $this->handlers) {
             throw new \LogicException('You tried to pop from an empty handler stack.');
         }
-
+        
         return array_shift($this->handlers);
     }
 
@@ -198,7 +206,7 @@ class Logger implements LoggerInterface
      *
      * If a map is passed, keys will be ignored.
      *
-     * @param  HandlerInterface[] $handlers
+     * @param HandlerInterface[] $handlers            
      * @return $this
      */
     public function setHandlers(array $handlers)
@@ -207,11 +215,12 @@ class Logger implements LoggerInterface
         foreach (array_reverse($handlers) as $handler) {
             $this->pushHandler($handler);
         }
-
+        
         return $this;
     }
 
     /**
+     *
      * @return HandlerInterface[]
      */
     public function getHandlers()
@@ -222,16 +231,16 @@ class Logger implements LoggerInterface
     /**
      * Adds a processor on to the stack.
      *
-     * @param  callable $callback
+     * @param callable $callback            
      * @return $this
      */
     public function pushProcessor($callback)
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
+        if (! is_callable($callback)) {
+            throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), ' . var_export($callback, true) . ' given');
         }
         array_unshift($this->processors, $callback);
-
+        
         return $this;
     }
 
@@ -242,14 +251,15 @@ class Logger implements LoggerInterface
      */
     public function popProcessor()
     {
-        if (!$this->processors) {
+        if (! $this->processors) {
             throw new \LogicException('You tried to pop from an empty processor stack.');
         }
-
+        
         return array_shift($this->processors);
     }
 
     /**
+     *
      * @return callable[]
      */
     public function getProcessors()
@@ -268,7 +278,8 @@ class Logger implements LoggerInterface
      * a second resolution timestamp in systems which generate a large number
      * of log events.
      *
-     * @param bool $micro True to use microtime() to create timestamps
+     * @param bool $micro
+     *            True to use microtime() to create timestamps
      */
     public function useMicrosecondTimestamps($micro)
     {
@@ -278,46 +289,51 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record.
      *
-     * @param  int     $level   The logging level
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param int $level
+     *            The logging level
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addRecord($level, $message, array $context = array())
     {
-        if (!$this->handlers) {
+        if (! $this->handlers) {
             $this->pushHandler(new StreamHandler('php://stderr', static::DEBUG));
         }
-
+        
         $levelName = static::getLevelName($level);
-
+        
         // check if any handler will handle this message so we can return early and save cycles
         $handlerKey = null;
         reset($this->handlers);
         while ($handler = current($this->handlers)) {
-            if ($handler->isHandling(array('level' => $level))) {
+            if ($handler->isHandling(array(
+                'level' => $level
+            ))) {
                 $handlerKey = key($this->handlers);
                 break;
             }
-
+            
             next($this->handlers);
         }
-
+        
         if (null === $handlerKey) {
             return false;
         }
-
-        if (!static::$timezone) {
+        
+        if (! static::$timezone) {
             static::$timezone = new \DateTimeZone(date_default_timezone_get() ?: 'UTC');
         }
-
+        
         if ($this->microsecondTimestamps) {
             $ts = \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true)), static::$timezone);
         } else {
             $ts = new \DateTime(null, static::$timezone);
         }
         $ts->setTimezone(static::$timezone);
-
+        
         $record = array(
             'message' => (string) $message,
             'context' => $context,
@@ -325,29 +341,31 @@ class Logger implements LoggerInterface
             'level_name' => $levelName,
             'channel' => $this->name,
             'datetime' => $ts,
-            'extra' => array(),
+            'extra' => array()
         );
-
+        
         foreach ($this->processors as $processor) {
             $record = call_user_func($processor, $record);
         }
-
+        
         while ($handler = current($this->handlers)) {
             if (true === $handler->handle($record)) {
                 break;
             }
-
+            
             next($this->handlers);
         }
-
+        
         return true;
     }
 
     /**
      * Adds a log record at the DEBUG level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addDebug($message, array $context = array())
@@ -358,8 +376,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the INFO level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addInfo($message, array $context = array())
@@ -370,8 +390,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the NOTICE level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addNotice($message, array $context = array())
@@ -382,8 +404,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the WARNING level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addWarning($message, array $context = array())
@@ -394,8 +418,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the ERROR level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addError($message, array $context = array())
@@ -406,8 +432,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the CRITICAL level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addCritical($message, array $context = array())
@@ -418,8 +446,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the ALERT level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addAlert($message, array $context = array())
@@ -430,8 +460,10 @@ class Logger implements LoggerInterface
     /**
      * Adds a log record at the EMERGENCY level.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function addEmergency($message, array $context = array())
@@ -452,51 +484,52 @@ class Logger implements LoggerInterface
     /**
      * Gets the name of the logging level.
      *
-     * @param  int    $level
+     * @param int $level            
      * @return string
      */
     public static function getLevelName($level)
     {
-        if (!isset(static::$levels[$level])) {
-            throw new InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
+        if (! isset(static::$levels[$level])) {
+            throw new InvalidArgumentException('Level "' . $level . '" is not defined, use one of: ' . implode(', ', array_keys(static::$levels)));
         }
-
+        
         return static::$levels[$level];
     }
 
     /**
      * Converts PSR-3 levels to Monolog ones if necessary
      *
-     * @param string|int Level number (monolog) or name (PSR-3)
+     * @param
+     *            string|int Level number (monolog) or name (PSR-3)
      * @return int
      */
     public static function toMonologLevel($level)
     {
-        if (is_string($level) && defined(__CLASS__.'::'.strtoupper($level))) {
-            return constant(__CLASS__.'::'.strtoupper($level));
+        if (is_string($level) && defined(__CLASS__ . '::' . strtoupper($level))) {
+            return constant(__CLASS__ . '::' . strtoupper($level));
         }
-
+        
         return $level;
     }
 
     /**
      * Checks whether the Logger has a handler that listens on the given level
      *
-     * @param  int     $level
+     * @param int $level            
      * @return Boolean
      */
     public function isHandling($level)
     {
         $record = array(
-            'level' => $level,
+            'level' => $level
         );
-
+        
         foreach ($this->handlers as $handler) {
             if ($handler->isHandling($record)) {
                 return true;
             }
         }
-
+        
         return false;
     }
 
@@ -505,15 +538,18 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  mixed   $level   The log level
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param mixed $level
+     *            The log level
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function log($level, $message, array $context = array())
     {
         $level = static::toMonologLevel($level);
-
+        
         return $this->addRecord($level, $message, $context);
     }
 
@@ -522,8 +558,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function debug($message, array $context = array())
@@ -536,8 +574,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function info($message, array $context = array())
@@ -550,8 +590,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function notice($message, array $context = array())
@@ -564,8 +606,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function warn($message, array $context = array())
@@ -578,8 +622,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function warning($message, array $context = array())
@@ -592,8 +638,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function err($message, array $context = array())
@@ -606,8 +654,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function error($message, array $context = array())
@@ -620,8 +670,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function crit($message, array $context = array())
@@ -634,8 +686,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function critical($message, array $context = array())
@@ -648,8 +702,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function alert($message, array $context = array())
@@ -662,8 +718,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function emerg($message, array $context = array())
@@ -676,8 +734,10 @@ class Logger implements LoggerInterface
      *
      * This method allows for compatibility with common interfaces.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message
+     *            The log message
+     * @param array $context
+     *            The log context
      * @return Boolean Whether the record has been processed
      */
     public function emergency($message, array $context = array())
@@ -690,7 +750,8 @@ class Logger implements LoggerInterface
      *
      * This is stored globally for all Logger instances
      *
-     * @param \DateTimeZone $tz Timezone object
+     * @param \DateTimeZone $tz
+     *            Timezone object
      */
     public static function setTimezone(\DateTimeZone $tz)
     {

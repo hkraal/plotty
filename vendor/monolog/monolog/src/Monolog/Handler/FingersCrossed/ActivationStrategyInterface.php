@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler\FingersCrossed;
 
 /**
@@ -18,10 +17,11 @@ namespace Monolog\Handler\FingersCrossed;
  */
 interface ActivationStrategyInterface
 {
+
     /**
      * Returns whether the given record activates the handler.
      *
-     * @param  array   $record
+     * @param array $record            
      * @return Boolean
      */
     public function isHandlerActivated(array $record);

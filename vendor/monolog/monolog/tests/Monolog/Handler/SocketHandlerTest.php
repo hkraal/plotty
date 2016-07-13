@@ -8,23 +8,26 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\TestCase;
 use Monolog\Logger;
 
 /**
+ *
  * @author Pablo de Leon Belloc <pablolb@gmail.com>
  */
 class SocketHandlerTest extends TestCase
 {
+
     /**
+     *
      * @var Monolog\Handler\SocketHandler
      */
     private $handler;
 
     /**
+     *
      * @var resource
      */
     private $res;
@@ -44,7 +47,7 @@ class SocketHandlerTest extends TestCase
     public function testBadConnectionTimeout()
     {
         $this->createHandler('localhost:1234');
-        $this->handler->setConnectionTimeout(-1);
+        $this->handler->setConnectionTimeout(- 1);
     }
 
     public function testSetConnectionTimeout()
@@ -60,7 +63,7 @@ class SocketHandlerTest extends TestCase
     public function testBadTimeout()
     {
         $this->createHandler('localhost:1234');
-        $this->handler->setTimeout(-1);
+        $this->handler->setTimeout(- 1);
     }
 
     public function testSetTimeout()
@@ -88,7 +91,9 @@ class SocketHandlerTest extends TestCase
      */
     public function testExceptionIsThrownOnFsockopenError()
     {
-        $this->setMockHandler(array('fsockopen'));
+        $this->setMockHandler(array(
+            'fsockopen'
+        ));
         $this->handler->expects($this->once())
             ->method('fsockopen')
             ->will($this->returnValue(false));
@@ -100,7 +105,9 @@ class SocketHandlerTest extends TestCase
      */
     public function testExceptionIsThrownOnPfsockopenError()
     {
-        $this->setMockHandler(array('pfsockopen'));
+        $this->setMockHandler(array(
+            'pfsockopen'
+        ));
         $this->handler->expects($this->once())
             ->method('pfsockopen')
             ->will($this->returnValue(false));
@@ -113,7 +120,9 @@ class SocketHandlerTest extends TestCase
      */
     public function testExceptionIsThrownIfCannotSetTimeout()
     {
-        $this->setMockHandler(array('streamSetTimeout'));
+        $this->setMockHandler(array(
+            'streamSetTimeout'
+        ));
         $this->handler->expects($this->once())
             ->method('streamSetTimeout')
             ->will($this->returnValue(false));
@@ -125,21 +134,23 @@ class SocketHandlerTest extends TestCase
      */
     public function testWriteFailsOnIfFwriteReturnsFalse()
     {
-        $this->setMockHandler(array('fwrite'));
-
+        $this->setMockHandler(array(
+            'fwrite'
+        ));
+        
         $callback = function ($arg) {
             $map = array(
                 'Hello world' => 6,
-                'world' => false,
+                'world' => false
             );
-
+            
             return $map[$arg];
         };
-
+        
         $this->handler->expects($this->exactly(2))
             ->method('fwrite')
             ->will($this->returnCallback($callback));
-
+        
         $this->writeRecord('Hello world');
     }
 
@@ -148,24 +159,29 @@ class SocketHandlerTest extends TestCase
      */
     public function testWriteFailsIfStreamTimesOut()
     {
-        $this->setMockHandler(array('fwrite', 'streamGetMetadata'));
-
+        $this->setMockHandler(array(
+            'fwrite',
+            'streamGetMetadata'
+        ));
+        
         $callback = function ($arg) {
             $map = array(
                 'Hello world' => 6,
-                'world' => 5,
+                'world' => 5
             );
-
+            
             return $map[$arg];
         };
-
+        
         $this->handler->expects($this->exactly(1))
             ->method('fwrite')
             ->will($this->returnCallback($callback));
         $this->handler->expects($this->exactly(1))
             ->method('streamGetMetadata')
-            ->will($this->returnValue(array('timed_out' => true)));
-
+            ->will($this->returnValue(array(
+            'timed_out' => true
+        )));
+        
         $this->writeRecord('Hello world');
     }
 
@@ -174,22 +190,27 @@ class SocketHandlerTest extends TestCase
      */
     public function testWriteFailsOnIncompleteWrite()
     {
-        $this->setMockHandler(array('fwrite', 'streamGetMetadata'));
-
+        $this->setMockHandler(array(
+            'fwrite',
+            'streamGetMetadata'
+        ));
+        
         $res = $this->res;
         $callback = function ($string) use ($res) {
             fclose($res);
-
+            
             return strlen('Hello');
         };
-
+        
         $this->handler->expects($this->exactly(1))
             ->method('fwrite')
             ->will($this->returnCallback($callback));
         $this->handler->expects($this->exactly(1))
             ->method('streamGetMetadata')
-            ->will($this->returnValue(array('timed_out' => false)));
-
+            ->will($this->returnValue(array(
+            'timed_out' => false
+        )));
+        
         $this->writeRecord('Hello world');
     }
 
@@ -205,21 +226,23 @@ class SocketHandlerTest extends TestCase
 
     public function testWriteWithMock()
     {
-        $this->setMockHandler(array('fwrite'));
-
+        $this->setMockHandler(array(
+            'fwrite'
+        ));
+        
         $callback = function ($arg) {
             $map = array(
                 'Hello world' => 6,
-                'world' => 5,
+                'world' => 5
             );
-
+            
             return $map[$arg];
         };
-
+        
         $this->handler->expects($this->exactly(2))
             ->method('fwrite')
             ->will($this->returnCallback($callback));
-
+        
         $this->writeRecord('Hello world');
     }
 
@@ -247,18 +270,23 @@ class SocketHandlerTest extends TestCase
      */
     public function testAvoidInfiniteLoopWhenNoDataIsWrittenForAWritingTimeoutSeconds()
     {
-        $this->setMockHandler(array('fwrite', 'streamGetMetadata'));
-
+        $this->setMockHandler(array(
+            'fwrite',
+            'streamGetMetadata'
+        ));
+        
         $this->handler->expects($this->any())
             ->method('fwrite')
             ->will($this->returnValue(0));
-
+        
         $this->handler->expects($this->any())
             ->method('streamGetMetadata')
-            ->will($this->returnValue(array('timed_out' => false)));
-
+            ->will($this->returnValue(array(
+            'timed_out' => false
+        )));
+        
         $this->handler->setWritingTimeout(1);
-
+        
         $this->writeRecord('Hello world');
     }
 
@@ -276,34 +304,38 @@ class SocketHandlerTest extends TestCase
     private function setMockHandler(array $methods = array())
     {
         $this->res = fopen('php://memory', 'a');
-
-        $defaultMethods = array('fsockopen', 'pfsockopen', 'streamSetTimeout');
-        $newMethods = array_diff($methods, $defaultMethods);
-
-        $finalMethods = array_merge($defaultMethods, $newMethods);
-
-        $this->handler = $this->getMock(
-            '\Monolog\Handler\SocketHandler', $finalMethods, array('localhost:1234')
+        
+        $defaultMethods = array(
+            'fsockopen',
+            'pfsockopen',
+            'streamSetTimeout'
         );
-
-        if (!in_array('fsockopen', $methods)) {
+        $newMethods = array_diff($methods, $defaultMethods);
+        
+        $finalMethods = array_merge($defaultMethods, $newMethods);
+        
+        $this->handler = $this->getMock('\Monolog\Handler\SocketHandler', $finalMethods, array(
+            'localhost:1234'
+        ));
+        
+        if (! in_array('fsockopen', $methods)) {
             $this->handler->expects($this->any())
                 ->method('fsockopen')
                 ->will($this->returnValue($this->res));
         }
-
-        if (!in_array('pfsockopen', $methods)) {
+        
+        if (! in_array('pfsockopen', $methods)) {
             $this->handler->expects($this->any())
                 ->method('pfsockopen')
                 ->will($this->returnValue($this->res));
         }
-
-        if (!in_array('streamSetTimeout', $methods)) {
+        
+        if (! in_array('streamSetTimeout', $methods)) {
             $this->handler->expects($this->any())
                 ->method('streamSetTimeout')
                 ->will($this->returnValue(true));
         }
-
+        
         $this->handler->setFormatter($this->getIdentityFormatter());
     }
 }

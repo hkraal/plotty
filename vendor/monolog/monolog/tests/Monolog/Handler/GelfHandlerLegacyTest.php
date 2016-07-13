@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Gelf\Message;
@@ -18,12 +17,13 @@ use Monolog\Formatter\GelfMessageFormatter;
 
 class GelfHandlerLegacyTest extends TestCase
 {
+
     public function setUp()
     {
-        if (!class_exists('Gelf\MessagePublisher') || !class_exists('Gelf\Message')) {
+        if (! class_exists('Gelf\MessagePublisher') || ! class_exists('Gelf\Message')) {
             $this->markTestSkipped("mlehner/gelf-php not installed");
         }
-
+        
         require_once __DIR__ . '/GelfMockMessagePublisher.php';
     }
 
@@ -39,7 +39,7 @@ class GelfHandlerLegacyTest extends TestCase
     protected function getHandler($messagePublisher)
     {
         $handler = new GelfHandler($messagePublisher);
-
+        
         return $handler;
     }
 
@@ -52,10 +52,10 @@ class GelfHandlerLegacyTest extends TestCase
     {
         $messagePublisher = $this->getMessagePublisher();
         $handler = $this->getHandler($messagePublisher);
-
+        
         $record = $this->getRecord(Logger::DEBUG, "A test debug message");
         $handler->handle($record);
-
+        
         $this->assertEquals(7, $messagePublisher->lastMessage->getLevel());
         $this->assertEquals('test', $messagePublisher->lastMessage->getFacility());
         $this->assertEquals($record['message'], $messagePublisher->lastMessage->getShortMessage());
@@ -66,10 +66,10 @@ class GelfHandlerLegacyTest extends TestCase
     {
         $messagePublisher = $this->getMessagePublisher();
         $handler = $this->getHandler($messagePublisher);
-
+        
         $record = $this->getRecord(Logger::WARNING, "A test warning message");
         $handler->handle($record);
-
+        
         $this->assertEquals(4, $messagePublisher->lastMessage->getLevel());
         $this->assertEquals('test', $messagePublisher->lastMessage->getFacility());
         $this->assertEquals($record['message'], $messagePublisher->lastMessage->getShortMessage());
@@ -80,14 +80,14 @@ class GelfHandlerLegacyTest extends TestCase
     {
         $messagePublisher = $this->getMessagePublisher();
         $handler = $this->getHandler($messagePublisher);
-
+        
         $handler->setFormatter(new GelfMessageFormatter('mysystem', 'EXT', 'CTX'));
-
+        
         $record = $this->getRecord(Logger::WARNING, "A test warning message");
         $record['extra']['blarg'] = 'yep';
         $record['context']['from'] = 'logger';
         $handler->handle($record);
-
+        
         $this->assertEquals('mysystem', $messagePublisher->lastMessage->getHost());
         $this->assertArrayHasKey('_EXTblarg', $messagePublisher->lastMessage->toArray());
         $this->assertArrayHasKey('_CTXfrom', $messagePublisher->lastMessage->toArray());

@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
  * Route Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface RouteInterface
 {
@@ -24,8 +24,8 @@ interface RouteInterface
     /**
      * Retrieve a specific route argument
      *
-     * @param string $name
-     * @param mixed $default
+     * @param string $name            
+     * @param mixed $default            
      *
      * @return mixed
      */
@@ -55,8 +55,8 @@ interface RouteInterface
     /**
      * Set a route argument
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name            
+     * @param string $value            
      *
      * @return static
      */
@@ -65,7 +65,7 @@ interface RouteInterface
     /**
      * Replace route arguments
      *
-     * @param array $arguments
+     * @param array $arguments            
      *
      * @return static
      */
@@ -74,7 +74,7 @@ interface RouteInterface
     /**
      * Set route name
      *
-     * @param string $name
+     * @param string $name            
      *
      * @return static
      * @throws InvalidArgumentException if the route name is not a string
@@ -86,8 +86,9 @@ interface RouteInterface
      *
      * This method prepends new middleware to the route's middleware stack.
      *
-     * @param callable|string $callable The callback routine
-     *
+     * @param callable|string $callable
+     *            The callback routine
+     *            
      * @return RouteInterface
      */
     public function add($callable);
@@ -95,8 +96,8 @@ interface RouteInterface
     /**
      * Prepare the route for use
      *
-     * @param ServerRequestInterface $request
-     * @param array $arguments
+     * @param ServerRequestInterface $request            
+     * @param array $arguments            
      */
     public function prepare(ServerRequestInterface $request, array $arguments);
 
@@ -107,8 +108,8 @@ interface RouteInterface
      * and captures the resultant HTTP response object. It then sends the response
      * back to the Application.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request            
+     * @param ResponseInterface $response            
      * @return ResponseInterface
      */
     public function run(ServerRequestInterface $request, ResponseInterface $response);
@@ -120,9 +121,11 @@ interface RouteInterface
      * registered for the route, each callable middleware is invoked in
      * the order specified.
      *
-     * @param ServerRequestInterface $request  The current Request object
-     * @param ResponseInterface      $response The current Response object
-     *
+     * @param ServerRequestInterface $request
+     *            The current Request object
+     * @param ResponseInterface $response
+     *            The current Response object
+     *            
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response);

@@ -8,16 +8,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 use Monolog\Logger;
 
 class ElasticaFormatterTest extends \PHPUnit_Framework_TestCase
 {
+
     public function setUp()
     {
-        if (!class_exists("Elastica\Document")) {
+        if (! class_exists("Elastica\Document")) {
             $this->markTestSkipped("ruflin/elastica not installed");
         }
     }
@@ -34,31 +34,35 @@ class ElasticaFormatterTest extends \PHPUnit_Framework_TestCase
             'level' => Logger::ERROR,
             'level_name' => 'ERROR',
             'channel' => 'meh',
-            'context' => array('foo' => 7, 'bar', 'class' => new \stdClass),
+            'context' => array(
+                'foo' => 7,
+                'bar',
+                'class' => new \stdClass()
+            ),
             'datetime' => new \DateTime("@0"),
             'extra' => array(),
-            'message' => 'log',
+            'message' => 'log'
         );
-
+        
         // expected values
         $expected = $msg;
         $expected['datetime'] = '1970-01-01T00:00:00.000000+00:00';
         $expected['context'] = array(
             'class' => '[object] (stdClass: {})',
             'foo' => 7,
-            0 => 'bar',
+            0 => 'bar'
         );
-
+        
         // format log message
         $formatter = new ElasticaFormatter('my_index', 'doc_type');
         $doc = $formatter->format($msg);
         $this->assertInstanceOf('Elastica\Document', $doc);
-
+        
         // Document parameters
         $params = $doc->getParams();
         $this->assertEquals('my_index', $params['_index']);
         $this->assertEquals('doc_type', $params['_type']);
-
+        
         // Document data values
         $data = $doc->getData();
         foreach (array_keys($expected) as $key) {

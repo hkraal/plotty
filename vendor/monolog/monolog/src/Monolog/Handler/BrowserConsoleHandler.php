@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Formatter\LineFormatter;
@@ -20,17 +19,18 @@ use Monolog\Formatter\LineFormatter;
  */
 class BrowserConsoleHandler extends AbstractProcessingHandler
 {
+
     protected static $initialized = false;
+
     protected static $records = array();
 
     /**
-     * {@inheritDoc}
      *
-     * Formatted output may contain some formatting markers to be transferred to `console.log` using the %c format.
-     *
-     * Example of formatted string:
-     *
-     *     You can do [[blue text]]{color: blue} or [[green background]]{background-color: green; color: white}
+     * {@inheritdoc} Formatted output may contain some formatting markers to be transferred to `console.log` using the %c format.
+     *              
+     *               Example of formatted string:
+     *              
+     *               You can do [[blue text]]{color: blue} or [[green background]]{background-color: green; color: white}
      */
     protected function getDefaultFormatter()
     {
@@ -38,15 +38,17 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     protected function write(array $record)
     {
         // Accumulate records
         self::$records[] = $record;
-
+        
         // Register shutdown handler if not already done
-        if (!self::$initialized) {
+        if (! self::$initialized) {
             self::$initialized = true;
             $this->registerShutdownFunction();
         }
@@ -62,7 +64,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
         if ($format === 'unknown') {
             return;
         }
-
+        
         if (count(self::$records)) {
             if ($format === 'html') {
                 self::writeOutput('<script>' . self::generateScript() . '</script>');
@@ -87,14 +89,17 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     protected function registerShutdownFunction()
     {
         if (PHP_SAPI !== 'cli') {
-            register_shutdown_function(array('Monolog\Handler\BrowserConsoleHandler', 'send'));
+            register_shutdown_function(array(
+                'Monolog\Handler\BrowserConsoleHandler',
+                'send'
+            ));
         }
     }
 
     /**
      * Wrapper for echo to allow overriding
      *
-     * @param string $str
+     * @param string $str            
      */
     protected static function writeOutput($str)
     {
@@ -126,7 +131,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
                 break;
             }
         }
-
+        
         return 'html';
     }
 
@@ -136,57 +141,66 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
         foreach (self::$records as $record) {
             $context = self::dump('Context', $record['context']);
             $extra = self::dump('Extra', $record['extra']);
-
+            
             if (empty($context) && empty($extra)) {
                 $script[] = self::call_array('log', self::handleStyles($record['formatted']));
             } else {
-                $script = array_merge($script,
-                    array(self::call_array('groupCollapsed', self::handleStyles($record['formatted']))),
-                    $context,
-                    $extra,
-                    array(self::call('groupEnd'))
-                );
+                $script = array_merge($script, array(
+                    self::call_array('groupCollapsed', self::handleStyles($record['formatted']))
+                ), $context, $extra, array(
+                    self::call('groupEnd')
+                ));
             }
         }
-
+        
         return "(function (c) {if (c && c.groupCollapsed) {\n" . implode("\n", $script) . "\n}})(console);";
     }
 
     private static function handleStyles($formatted)
     {
-        $args = array(self::quote('font-weight: normal'));
+        $args = array(
+            self::quote('font-weight: normal')
+        );
         $format = '%c' . $formatted;
         preg_match_all('/\[\[(.*?)\]\]\{([^}]*)\}/s', $format, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-
+        
         foreach (array_reverse($matches) as $match) {
             $args[] = self::quote(self::handleCustomStyles($match[2][0], $match[1][0]));
             $args[] = '"font-weight: normal"';
-
+            
             $pos = $match[0][1];
             $format = substr($format, 0, $pos) . '%c' . $match[1][0] . '%c' . substr($format, $pos + strlen($match[0][0]));
         }
-
+        
         array_unshift($args, self::quote($format));
-
+        
         return $args;
     }
 
     private static function handleCustomStyles($style, $string)
     {
-        static $colors = array('blue', 'green', 'red', 'magenta', 'orange', 'black', 'grey');
+        static $colors = array(
+            'blue',
+            'green',
+            'red',
+            'magenta',
+            'orange',
+            'black',
+            'grey'
+        );
         static $labels = array();
-
+        
         return preg_replace_callback('/macro\s*:(.*?)(?:;|$)/', function ($m) use ($string, &$colors, &$labels) {
             if (trim($m[1]) === 'autolabel') {
                 // Format the string as a label with consistent auto assigned background color
-                if (!isset($labels[$string])) {
+                if (! isset($labels[$string])) {
                     $labels[$string] = $colors[count($labels) % count($colors)];
                 }
                 $color = $labels[$string];
-
+                
                 return "background-color: $color; color: white; border-radius: 3px; padding: 0 2px 0 2px";
             }
-
+            
             return $m[1];
         }, $style);
     }
@@ -206,7 +220,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
             }
             $script[] = self::call('log', self::quote('%s: %o'), self::quote($key), $value);
         }
-
+        
         return $script;
     }
 
@@ -219,7 +233,7 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     {
         $args = func_get_args();
         $method = array_shift($args);
-
+        
         return self::call_array($method, $args);
     }
 

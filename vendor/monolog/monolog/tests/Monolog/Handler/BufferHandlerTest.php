@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\TestCase;
@@ -16,6 +15,7 @@ use Monolog\Logger;
 
 class BufferHandlerTest extends TestCase
 {
+
     private $shutdownCheckHandler;
 
     /**
@@ -47,12 +47,15 @@ class BufferHandlerTest extends TestCase
         $handler->handle($this->getRecord(Logger::WARNING));
         $handler->handle($this->getRecord(Logger::DEBUG));
         $this->shutdownCheckHandler = $test;
-        register_shutdown_function(array($this, 'checkPropagation'));
+        register_shutdown_function(array(
+            $this,
+            'checkPropagation'
+        ));
     }
 
     public function checkPropagation()
     {
-        if (!$this->shutdownCheckHandler->hasWarningRecords() || !$this->shutdownCheckHandler->hasDebugRecords()) {
+        if (! $this->shutdownCheckHandler->hasWarningRecords() || ! $this->shutdownCheckHandler->hasDebugRecords()) {
             echo '!!! BufferHandlerTest::testPropagatesRecordsAtEndOfRequest failed to verify that the messages have been propagated' . PHP_EOL;
             exit(1);
         }
@@ -82,23 +85,23 @@ class BufferHandlerTest extends TestCase
     {
         $test = new TestHandler();
         $handler = new BufferHandler($test, 3, Logger::DEBUG, true, true);
-
+        
         // send two records
         $handler->handle($this->getRecord(Logger::DEBUG));
         $handler->handle($this->getRecord(Logger::DEBUG));
         $handler->handle($this->getRecord(Logger::DEBUG));
         $this->assertFalse($test->hasDebugRecords());
         $this->assertCount(0, $test->getRecords());
-
+        
         // overflow
         $handler->handle($this->getRecord(Logger::INFO));
         $this->assertTrue($test->hasDebugRecords());
         $this->assertCount(3, $test->getRecords());
-
+        
         // should buffer again
         $handler->handle($this->getRecord(Logger::WARNING));
         $this->assertCount(3, $test->getRecords());
-
+        
         $handler->close();
         $this->assertCount(5, $test->getRecords());
         $this->assertTrue($test->hasWarningRecords());
@@ -146,7 +149,7 @@ class BufferHandlerTest extends TestCase
         $handler = new BufferHandler($test);
         $handler->pushProcessor(function ($record) {
             $record['extra']['foo'] = true;
-
+            
             return $record;
         });
         $handler->handle($this->getRecord(Logger::WARNING));

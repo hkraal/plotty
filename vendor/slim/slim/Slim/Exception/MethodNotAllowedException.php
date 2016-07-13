@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class MethodNotAllowedException extends SlimException
 {
+
     /**
      * HTTP methods allowed
      *
@@ -23,9 +24,9 @@ class MethodNotAllowedException extends SlimException
     /**
      * Create new exception
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param string[] $allowedMethods
+     * @param ServerRequestInterface $request            
+     * @param ResponseInterface $response            
+     * @param string[] $allowedMethods            
      */
     public function __construct(ServerRequestInterface $request, ResponseInterface $response, array $allowedMethods)
     {

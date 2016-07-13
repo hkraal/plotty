@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\TestCase;
@@ -16,6 +15,7 @@ use Monolog\Logger;
 
 class StreamHandlerTest extends TestCase
 {
+
     /**
      * @covers Monolog\Handler\StreamHandler::__construct
      * @covers Monolog\Handler\StreamHandler::write
@@ -54,7 +54,7 @@ class StreamHandlerTest extends TestCase
         $streamProp = new \ReflectionProperty('Monolog\Handler\StreamHandler', 'stream');
         $streamProp->setAccessible(true);
         $handle = $streamProp->getValue($handler);
-
+        
         $this->assertTrue(is_resource($handle));
         $handler->close();
         $this->assertFalse(is_resource($handle));
@@ -94,9 +94,17 @@ class StreamHandlerTest extends TestCase
     public function invalidArgumentProvider()
     {
         return array(
-            array(1),
-            array(array()),
-            array(array('bogus://url')),
+            array(
+                1
+            ),
+            array(
+                array()
+            ),
+            array(
+                array(
+                    'bogus://url'
+                )
+            )
         );
     }
 
@@ -128,7 +136,7 @@ class StreamHandlerTest extends TestCase
      */
     public function testWriteNonExistingResource()
     {
-        $handler = new StreamHandler('ftp://foo/bar/baz/'.rand(0, 10000));
+        $handler = new StreamHandler('ftp://foo/bar/baz/' . rand(0, 10000));
         $handler->handle($this->getRecord());
     }
 
@@ -138,7 +146,7 @@ class StreamHandlerTest extends TestCase
      */
     public function testWriteNonExistingPath()
     {
-        $handler = new StreamHandler(sys_get_temp_dir().'/bar/'.rand(0, 10000).DIRECTORY_SEPARATOR.rand(0, 10000));
+        $handler = new StreamHandler(sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handle($this->getRecord());
     }
 
@@ -148,7 +156,7 @@ class StreamHandlerTest extends TestCase
      */
     public function testWriteNonExistingFileResource()
     {
-        $handler = new StreamHandler('file://'.sys_get_temp_dir().'/bar/'.rand(0, 10000).DIRECTORY_SEPARATOR.rand(0, 10000));
+        $handler = new StreamHandler('file://' . sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handle($this->getRecord());
     }
 
@@ -163,7 +171,7 @@ class StreamHandlerTest extends TestCase
         if (defined('PHP_WINDOWS_VERSION_BUILD')) {
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
-        $handler = new StreamHandler('/foo/bar/'.rand(0, 10000).DIRECTORY_SEPARATOR.rand(0, 10000));
+        $handler = new StreamHandler('/foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handle($this->getRecord());
     }
 
@@ -178,7 +186,7 @@ class StreamHandlerTest extends TestCase
         if (defined('PHP_WINDOWS_VERSION_BUILD')) {
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
-        $handler = new StreamHandler('file:///foo/bar/'.rand(0, 10000).DIRECTORY_SEPARATOR.rand(0, 10000));
+        $handler = new StreamHandler('file:///foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handle($this->getRecord());
     }
 }

@@ -23,21 +23,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 namespace Pimple\Tests;
 
 use Pimple\Container;
 
 /**
- * @author  Igor Wiedler <igor@wiedler.ch>
+ *
+ * @author Igor Wiedler <igor@wiedler.ch>
  */
 class PimpleTest extends \PHPUnit_Framework_TestCase
 {
+
     public function testWithString()
     {
         $pimple = new Container();
         $pimple['param'] = 'value';
-
+        
         $this->assertEquals('value', $pimple['param']);
     }
 
@@ -47,7 +48,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['service'] = function () {
             return new Fixtures\Service();
         };
-
+        
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $pimple['service']);
     }
 
@@ -57,13 +58,13 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['service'] = $pimple->factory(function () {
             return new Fixtures\Service();
         });
-
+        
         $serviceOne = $pimple['service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceOne);
-
+        
         $serviceTwo = $pimple['service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceTwo);
-
+        
         $this->assertNotSame($serviceOne, $serviceTwo);
     }
 
@@ -76,7 +77,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['container'] = function ($container) {
             return $container;
         };
-
+        
         $this->assertNotSame($pimple, $pimple['service']);
         $this->assertSame($pimple, $pimple['container']);
     }
@@ -88,9 +89,9 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['service'] = function () {
             return new Fixtures\Service();
         };
-
+        
         $pimple['null'] = null;
-
+        
         $this->assertTrue(isset($pimple['param']));
         $this->assertTrue(isset($pimple['service']));
         $this->assertTrue(isset($pimple['null']));
@@ -99,9 +100,11 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructorInjection()
     {
-        $params = array('param' => 'value');
+        $params = array(
+            'param' => 'value'
+        );
         $pimple = new Container($params);
-
+        
         $this->assertSame($params['param'], $pimple['param']);
     }
 
@@ -129,7 +132,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['service'] = function () {
             return new Fixtures\Service();
         };
-
+        
         unset($pimple['param'], $pimple['service']);
         $this->assertFalse(isset($pimple['param']));
         $this->assertFalse(isset($pimple['service']));
@@ -142,13 +145,13 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     {
         $pimple = new Container();
         $pimple['shared_service'] = $service;
-
+        
         $serviceOne = $pimple['shared_service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceOne);
-
+        
         $serviceTwo = $pimple['shared_service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceTwo);
-
+        
         $this->assertSame($serviceOne, $serviceTwo);
     }
 
@@ -159,7 +162,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     {
         $pimple = new Container();
         $pimple['protected'] = $pimple->protect($service);
-
+        
         $this->assertSame($service, $pimple['protected']);
     }
 
@@ -173,7 +176,9 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     public function testRaw()
     {
         $pimple = new Container();
-        $pimple['service'] = $definition = $pimple->factory(function () { return 'foo'; });
+        $pimple['service'] = $definition = $pimple->factory(function () {
+            return 'foo';
+        });
         $this->assertSame($definition, $pimple->raw('service'));
     }
 
@@ -212,7 +217,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple['factory_service'] = $pimple->factory(function () {
             return new Fixtures\Service();
         });
-
+        
         $pimple->extend('shared_service', $service);
         $serviceOne = $pimple['shared_service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceOne);
@@ -220,7 +225,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceTwo);
         $this->assertSame($serviceOne, $serviceTwo);
         $this->assertSame($serviceOne->value, $serviceTwo->value);
-
+        
         $pimple->extend('factory_service', $service);
         $serviceOne = $pimple['factory_service'];
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $serviceOne);
@@ -236,15 +241,19 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Pimple extension does not support this test');
         }
         $pimple = new Container();
-
-        $pimple['foo'] = $pimple->factory(function () { return; });
-        $pimple['foo'] = $pimple->extend('foo', function ($foo, $pimple) { return; });
+        
+        $pimple['foo'] = $pimple->factory(function () {
+            return;
+        });
+        $pimple['foo'] = $pimple->extend('foo', function ($foo, $pimple) {
+            return;
+        });
         unset($pimple['foo']);
-
+        
         $p = new \ReflectionProperty($pimple, 'values');
         $p->setAccessible(true);
         $this->assertEmpty($p->getValue($pimple));
-
+        
         $p = new \ReflectionProperty($pimple, 'factories');
         $p->setAccessible(true);
         $this->assertCount(0, $p->getValue($pimple));
@@ -265,25 +274,32 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
         $pimple = new Container();
         $pimple['foo'] = 123;
         $pimple['bar'] = 123;
-
-        $this->assertEquals(array('foo', 'bar'), $pimple->keys());
+        
+        $this->assertEquals(array(
+            'foo',
+            'bar'
+        ), $pimple->keys());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function settingAnInvokableObjectShouldTreatItAsFactory()
     {
         $pimple = new Container();
         $pimple['invokable'] = new Fixtures\Invokable();
-
+        
         $this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $pimple['invokable']);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function settingNonInvokableObjectShouldTreatItAsParameter()
     {
         $pimple = new Container();
         $pimple['non_invokable'] = new Fixtures\NonInvokable();
-
+        
         $this->assertInstanceOf('Pimple\Tests\Fixtures\NonInvokable', $pimple['non_invokable']);
     }
 
@@ -339,8 +355,12 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     public function badServiceDefinitionProvider()
     {
         return array(
-          array(123),
-          array(new Fixtures\NonInvokable()),
+            array(
+                123
+            ),
+            array(
+                new Fixtures\NonInvokable()
+            )
         );
     }
 
@@ -350,13 +370,17 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     public function serviceDefinitionProvider()
     {
         return array(
-            array(function ($value) {
-                $service = new Fixtures\Service();
-                $service->value = $value;
-
-                return $service;
-            }),
-            array(new Fixtures\Invokable()),
+            array(
+                function ($value) {
+                    $service = new Fixtures\Service();
+                    $service->value = $value;
+                    
+                    return $service;
+                }
+            ),
+            array(
+                new Fixtures\Invokable()
+            )
         );
     }
 
@@ -367,7 +391,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             return 'foo';
         };
         $foo = $pimple['foo'];
-
+        
         $pimple['bar'] = function () {
             return 'bar';
         };
@@ -385,7 +409,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             return 'foo';
         };
         $foo = $pimple['foo'];
-
+        
         $pimple['foo'] = function () {
             return 'bar';
         };
@@ -398,7 +422,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             return 'foo';
         };
         $foo = $pimple['foo'];
-
+        
         unset($pimple['foo']);
         $pimple['foo'] = function () {
             return 'bar';
@@ -431,7 +455,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
             return 'bar';
         };
         $foo = $pimple['foo'];
-
+        
         $pimple['bar'] = $pimple->extend('bar', function ($bar, $app) {
             return "$bar.baz";
         });

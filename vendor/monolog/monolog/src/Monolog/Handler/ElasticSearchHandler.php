@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Formatter\FormatterInterface;
@@ -22,59 +21,71 @@ use Elastica\Exception\ExceptionInterface;
  *
  * Usage example:
  *
- *    $client = new \Elastica\Client();
- *    $options = array(
- *        'index' => 'elastic_index_name',
- *        'type' => 'elastic_doc_type',
- *    );
- *    $handler = new ElasticSearchHandler($client, $options);
- *    $log = new Logger('application');
- *    $log->pushHandler($handler);
+ * $client = new \Elastica\Client();
+ * $options = array(
+ * 'index' => 'elastic_index_name',
+ * 'type' => 'elastic_doc_type',
+ * );
+ * $handler = new ElasticSearchHandler($client, $options);
+ * $log = new Logger('application');
+ * $log->pushHandler($handler);
  *
  * @author Jelle Vink <jelle.vink@gmail.com>
  */
 class ElasticSearchHandler extends AbstractProcessingHandler
 {
+
     /**
+     *
      * @var Client
      */
     protected $client;
 
     /**
+     *
      * @var array Handler config options
      */
     protected $options = array();
 
     /**
-     * @param Client  $client  Elastica Client object
-     * @param array   $options Handler configuration
-     * @param int     $level   The minimum logging level at which this handler will be triggered
-     * @param Boolean $bubble  Whether the messages that are handled can bubble up the stack or not
+     *
+     * @param Client $client
+     *            Elastica Client object
+     * @param array $options
+     *            Handler configuration
+     * @param int $level
+     *            The minimum logging level at which this handler will be triggered
+     * @param Boolean $bubble
+     *            Whether the messages that are handled can bubble up the stack or not
      */
     public function __construct(Client $client, array $options = array(), $level = Logger::DEBUG, $bubble = true)
     {
         parent::__construct($level, $bubble);
         $this->client = $client;
-        $this->options = array_merge(
-            array(
-                'index'          => 'monolog',      // Elastic index name
-                'type'           => 'record',       // Elastic document type
-                'ignore_error'   => false,          // Suppress Elastica exceptions
-            ),
-            $options
-        );
+        $this->options = array_merge(array(
+            'index' => 'monolog', // Elastic index name
+            'type' => 'record', // Elastic document type
+            'ignore_error' => false
+        ) // Suppress Elastica exceptions
+, $options);
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     protected function write(array $record)
     {
-        $this->bulkSend(array($record['formatted']));
+        $this->bulkSend(array(
+            $record['formatted']
+        ));
     }
 
     /**
+     *
      * {@inheritdoc}
+     *
      */
     public function setFormatter(FormatterInterface $formatter)
     {
@@ -86,6 +97,7 @@ class ElasticSearchHandler extends AbstractProcessingHandler
 
     /**
      * Getter options
+     * 
      * @return array
      */
     public function getOptions()
@@ -94,7 +106,9 @@ class ElasticSearchHandler extends AbstractProcessingHandler
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     protected function getDefaultFormatter()
     {
@@ -102,7 +116,9 @@ class ElasticSearchHandler extends AbstractProcessingHandler
     }
 
     /**
+     *
      * {@inheritdoc}
+     *
      */
     public function handleBatch(array $records)
     {
@@ -112,7 +128,8 @@ class ElasticSearchHandler extends AbstractProcessingHandler
 
     /**
      * Use Elasticsearch bulk API to send list of documents
-     * @param  array             $documents
+     * 
+     * @param array $documents            
      * @throws \RuntimeException
      */
     protected function bulkSend(array $documents)
@@ -120,7 +137,7 @@ class ElasticSearchHandler extends AbstractProcessingHandler
         try {
             $this->client->addDocuments($documents);
         } catch (ExceptionInterface $e) {
-            if (!$this->options['ignore_error']) {
+            if (! $this->options['ignore_error']) {
                 throw new \RuntimeException("Error sending messages to Elasticsearch", 0, $e);
             }
         }

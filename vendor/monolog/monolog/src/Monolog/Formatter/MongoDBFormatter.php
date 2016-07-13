@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 /**
@@ -18,12 +17,17 @@ namespace Monolog\Formatter;
  */
 class MongoDBFormatter implements FormatterInterface
 {
+
     private $exceptionTraceAsString;
+
     private $maxNestingLevel;
 
     /**
-     * @param int  $maxNestingLevel        0 means infinite nesting, the $record itself is level 1, $record['context'] is 2
-     * @param bool $exceptionTraceAsString set to false to log exception traces as a sub documents instead of strings
+     *
+     * @param int $maxNestingLevel
+     *            0 means infinite nesting, the $record itself is level 1, $record['context'] is 2
+     * @param bool $exceptionTraceAsString
+     *            set to false to log exception traces as a sub documents instead of strings
      */
     public function __construct($maxNestingLevel = 3, $exceptionTraceAsString = true)
     {
@@ -32,7 +36,9 @@ class MongoDBFormatter implements FormatterInterface
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     public function format(array $record)
     {
@@ -40,14 +46,16 @@ class MongoDBFormatter implements FormatterInterface
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     public function formatBatch(array $records)
     {
         foreach ($records as $key => $record) {
             $records[$key] = $this->format($record);
         }
-
+        
         return $records;
     }
 
@@ -68,7 +76,7 @@ class MongoDBFormatter implements FormatterInterface
         } else {
             $record = '[...]';
         }
-
+        
         return $record;
     }
 
@@ -76,7 +84,7 @@ class MongoDBFormatter implements FormatterInterface
     {
         $objectVars = get_object_vars($value);
         $objectVars['class'] = get_class($value);
-
+        
         return $this->formatArray($objectVars, $nestingLevel);
     }
 
@@ -86,15 +94,15 @@ class MongoDBFormatter implements FormatterInterface
             'class' => get_class($exception),
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
-            'file' => $exception->getFile() . ':' . $exception->getLine(),
+            'file' => $exception->getFile() . ':' . $exception->getLine()
         );
-
+        
         if ($this->exceptionTraceAsString === true) {
             $formattedException['trace'] = $exception->getTraceAsString();
         } else {
             $formattedException['trace'] = $exception->getTrace();
         }
-
+        
         return $this->formatArray($formattedException, $nestingLevel);
     }
 

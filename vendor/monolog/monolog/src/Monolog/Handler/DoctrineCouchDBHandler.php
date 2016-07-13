@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\Logger;
@@ -22,6 +21,7 @@ use Doctrine\CouchDB\CouchDBClient;
  */
 class DoctrineCouchDBHandler extends AbstractProcessingHandler
 {
+
     private $client;
 
     public function __construct(CouchDBClient $client, $level = Logger::DEBUG, $bubble = true)
@@ -31,7 +31,9 @@ class DoctrineCouchDBHandler extends AbstractProcessingHandler
     }
 
     /**
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
+     *
      */
     protected function write(array $record)
     {
@@ -40,6 +42,6 @@ class DoctrineCouchDBHandler extends AbstractProcessingHandler
 
     protected function getDefaultFormatter()
     {
-        return new NormalizerFormatter;
+        return new NormalizerFormatter();
     }
 }

@@ -20,6 +20,7 @@ use Slim\Interfaces\CollectionInterface;
  */
 class Collection implements CollectionInterface
 {
+
     /**
      * The source data
      *
@@ -30,7 +31,8 @@ class Collection implements CollectionInterface
     /**
      * Create new collection
      *
-     * @param array $items Pre-populate collection with this key-value array
+     * @param array $items
+     *            Pre-populate collection with this key-value array
      */
     public function __construct(array $items = [])
     {
@@ -39,15 +41,19 @@ class Collection implements CollectionInterface
         }
     }
 
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * Collection interface
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
+    
     /**
      * Set collection item
      *
-     * @param string $key   The data key
-     * @param mixed  $value The data value
+     * @param string $key
+     *            The data key
+     * @param mixed $value
+     *            The data value
      */
     public function set($key, $value)
     {
@@ -57,9 +63,11 @@ class Collection implements CollectionInterface
     /**
      * Get collection item for key
      *
-     * @param string $key     The data key
-     * @param mixed  $default The default value to return if data key does not exist
-     *
+     * @param string $key
+     *            The data key
+     * @param mixed $default
+     *            The default value to return if data key does not exist
+     *            
      * @return mixed The key's value, or the default value
      */
     public function get($key, $default = null)
@@ -70,7 +78,8 @@ class Collection implements CollectionInterface
     /**
      * Add item to collection
      *
-     * @param array $items Key-value array of data to append to this collection
+     * @param array $items
+     *            Key-value array of data to append to this collection
      */
     public function replace(array $items)
     {
@@ -102,8 +111,9 @@ class Collection implements CollectionInterface
     /**
      * Does this collection have a given key?
      *
-     * @param string $key The data key
-     *
+     * @param string $key
+     *            The data key
+     *            
      * @return bool
      */
     public function has($key)
@@ -114,7 +124,8 @@ class Collection implements CollectionInterface
     /**
      * Remove item from collection
      *
-     * @param string $key The data key
+     * @param string $key
+     *            The data key
      */
     public function remove($key)
     {
@@ -129,15 +140,18 @@ class Collection implements CollectionInterface
         $this->data = [];
     }
 
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * ArrayAccess interface
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
+    
     /**
      * Does this collection have a given key?
      *
-     * @param  string $key The data key
-     *
+     * @param string $key
+     *            The data key
+     *            
      * @return bool
      */
     public function offsetExists($key)
@@ -148,8 +162,9 @@ class Collection implements CollectionInterface
     /**
      * Get collection item for key
      *
-     * @param string $key The data key
-     *
+     * @param string $key
+     *            The data key
+     *            
      * @return mixed The key's value, or the default value
      */
     public function offsetGet($key)
@@ -160,8 +175,10 @@ class Collection implements CollectionInterface
     /**
      * Set collection item
      *
-     * @param string $key   The data key
-     * @param mixed  $value The data value
+     * @param string $key
+     *            The data key
+     * @param mixed $value
+     *            The data value
      */
     public function offsetSet($key, $value)
     {
@@ -171,7 +188,8 @@ class Collection implements CollectionInterface
     /**
      * Remove item from collection
      *
-     * @param string $key The data key
+     * @param string $key
+     *            The data key
      */
     public function offsetUnset($key)
     {
@@ -188,10 +206,12 @@ class Collection implements CollectionInterface
         return count($this->data);
     }
 
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * IteratorAggregate interface
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
+    
     /**
      * Get collection iterator
      *

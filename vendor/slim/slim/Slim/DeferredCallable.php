@@ -1,6 +1,4 @@
 <?php
-
-
 namespace Slim;
 
 use Closure;
@@ -11,13 +9,15 @@ class DeferredCallable
     use CallableResolverAwareTrait;
 
     private $callable;
+
     /** @var  ContainerInterface */
     private $container;
 
     /**
      * DeferredMiddleware constructor.
-     * @param callable|string $callable
-     * @param ContainerInterface $container
+     * 
+     * @param callable|string $callable            
+     * @param ContainerInterface $container            
      */
     public function __construct($callable, ContainerInterface $container = null)
     {
@@ -31,9 +31,9 @@ class DeferredCallable
         if ($callable instanceof Closure) {
             $callable = $callable->bindTo($this->container);
         }
-
+        
         $args = func_get_args();
-
+        
         return call_user_func_array($callable, $args);
     }
 }

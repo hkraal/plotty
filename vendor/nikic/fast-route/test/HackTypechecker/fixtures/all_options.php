@@ -2,7 +2,8 @@
 
 namespace FastRoute\TestFixtures;
 
-function all_options_simple(): \FastRoute\Dispatcher {
+function all_options_simple(): \FastRoute\Dispatcher
+{
     return \FastRoute\simpleDispatcher(
       $collector ==> {},
       shape(
@@ -14,7 +15,8 @@ function all_options_simple(): \FastRoute\Dispatcher {
     );
 }
 
-function all_options_cached(): \FastRoute\Dispatcher {
+function all_options_cached(): \FastRoute\Dispatcher
+{
     return \FastRoute\cachedDispatcher(
       $collector ==> {},
       shape(

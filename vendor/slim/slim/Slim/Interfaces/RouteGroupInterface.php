@@ -14,10 +14,11 @@ use Slim\App;
  * RouteGroup Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface RouteGroupInterface
 {
+
     /**
      * Get route pattern
      *
@@ -28,8 +29,9 @@ interface RouteGroupInterface
     /**
      * Prepend middleware to the group middleware collection
      *
-     * @param callable|string $callable The callback routine
-     *
+     * @param callable|string $callable
+     *            The callback routine
+     *            
      * @return RouteGroupInterface
      */
     public function add($callable);
@@ -40,7 +42,7 @@ interface RouteGroupInterface
      * This method invokes the route group object's callable, collecting
      * nested route objects
      *
-     * @param App $app
+     * @param App $app            
      */
     public function __invoke(App $app);
 }

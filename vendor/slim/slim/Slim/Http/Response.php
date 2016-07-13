@@ -26,6 +26,7 @@ use Slim\Interfaces\Http\HeadersInterface;
  */
 class Response extends Message implements ResponseInterface
 {
+
     /**
      * Status code
      *
@@ -46,11 +47,11 @@ class Response extends Message implements ResponseInterface
      * @var array
      */
     protected static $messages = [
-        //Informational 1xx
+        // Informational 1xx
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
-        //Successful 2xx
+        // Successful 2xx
         200 => 'OK',
         201 => 'Created',
         202 => 'Accepted',
@@ -61,7 +62,7 @@ class Response extends Message implements ResponseInterface
         207 => 'Multi-Status',
         208 => 'Already Reported',
         226 => 'IM Used',
-        //Redirection 3xx
+        // Redirection 3xx
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
         302 => 'Found',
@@ -71,7 +72,7 @@ class Response extends Message implements ResponseInterface
         306 => '(Unused)',
         307 => 'Temporary Redirect',
         308 => 'Permanent Redirect',
-        //Client Error 4xx
+        // Client Error 4xx
         400 => 'Bad Request',
         401 => 'Unauthorized',
         402 => 'Payment Required',
@@ -99,7 +100,7 @@ class Response extends Message implements ResponseInterface
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
         451 => 'Unavailable For Legal Reasons',
-        //Server Error 5xx
+        // Server Error 5xx
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
@@ -110,15 +111,18 @@ class Response extends Message implements ResponseInterface
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
         510 => 'Not Extended',
-        511 => 'Network Authentication Required',
+        511 => 'Network Authentication Required'
     ];
 
     /**
      * Create new HTTP response.
      *
-     * @param int                   $status  The response status code.
-     * @param HeadersInterface|null $headers The response headers.
-     * @param StreamInterface|null  $body    The response body.
+     * @param int $status
+     *            The response status code.
+     * @param HeadersInterface|null $headers
+     *            The response headers.
+     * @param StreamInterface|null $body
+     *            The response body.
      */
     public function __construct($status = 200, HeadersInterface $headers = null, StreamInterface $body = null)
     {
@@ -129,7 +133,8 @@ class Response extends Message implements ResponseInterface
 
     /**
      * This method is applied to the cloned object
-     * after PHP performs an initial shallow-copy. This
+     * after PHP performs an initial shallow-copy.
+     * This
      * method completes a deep-copy by creating new objects
      * for the cloned object's internal reference pointers.
      */
@@ -138,10 +143,12 @@ class Response extends Message implements ResponseInterface
         $this->headers = clone $this->headers;
     }
 
-    /*******************************************************************************
+    /**
+     * *****************************************************************************
      * Status
-     ******************************************************************************/
-
+     * ****************************************************************************
+     */
+    
     /**
      * Gets the response status code.
      *
@@ -168,49 +175,52 @@ class Response extends Message implements ResponseInterface
      *
      * @link http://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int $code The 3-digit integer result code to set.
-     * @param string $reasonPhrase The reason phrase to use with the
-     *     provided status code; if none is provided, implementations MAY
-     *     use the defaults as suggested in the HTTP specification.
+     * @param int $code
+     *            The 3-digit integer result code to set.
+     * @param string $reasonPhrase
+     *            The reason phrase to use with the
+     *            provided status code; if none is provided, implementations MAY
+     *            use the defaults as suggested in the HTTP specification.
      * @return self
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
     public function withStatus($code, $reasonPhrase = '')
     {
         $code = $this->filterStatus($code);
-
-        if (!is_string($reasonPhrase) && !method_exists($reasonPhrase, '__toString')) {
+        
+        if (! is_string($reasonPhrase) && ! method_exists($reasonPhrase, '__toString')) {
             throw new InvalidArgumentException('ReasonPhrase must be a string');
         }
-
+        
         $clone = clone $this;
         $clone->status = $code;
         if ($reasonPhrase === '' && isset(static::$messages[$code])) {
             $reasonPhrase = static::$messages[$code];
         }
-
+        
         if ($reasonPhrase === '') {
             throw new InvalidArgumentException('ReasonPhrase must be supplied for this code');
         }
-
+        
         $clone->reasonPhrase = $reasonPhrase;
-
+        
         return $clone;
     }
 
     /**
      * Filter HTTP status code.
      *
-     * @param  int $status HTTP status code.
+     * @param int $status
+     *            HTTP status code.
      * @return int
      * @throws \InvalidArgumentException If an invalid HTTP status code is provided.
      */
     protected function filterStatus($status)
     {
-        if (!is_integer($status) || $status<100 || $status>599) {
+        if (! is_integer($status) || $status < 100 || $status > 599) {
             throw new InvalidArgumentException('Invalid HTTP status code');
         }
-
+        
         return $status;
     }
 
@@ -238,10 +248,12 @@ class Response extends Message implements ResponseInterface
         return '';
     }
 
-    /*******************************************************************************
+    /**
+     * *****************************************************************************
      * Body
-     ******************************************************************************/
-
+     * ****************************************************************************
+     */
+    
     /**
      * Write data to the response body.
      *
@@ -249,20 +261,22 @@ class Response extends Message implements ResponseInterface
      *
      * Proxies to the underlying stream and writes the provided data to it.
      *
-     * @param string $data
+     * @param string $data            
      * @return self
      */
     public function write($data)
     {
         $this->getBody()->write($data);
-
+        
         return $this;
     }
 
-    /*******************************************************************************
+    /**
+     * *****************************************************************************
      * Response Helpers
-     ******************************************************************************/
-
+     * ****************************************************************************
+     */
+    
     /**
      * Redirect.
      *
@@ -271,22 +285,24 @@ class Response extends Message implements ResponseInterface
      * This method prepares the response object to return an HTTP Redirect
      * response to the client.
      *
-     * @param  string|UriInterface $url    The redirect destination.
-     * @param  int|null            $status The redirect HTTP status code.
+     * @param string|UriInterface $url
+     *            The redirect destination.
+     * @param int|null $status
+     *            The redirect HTTP status code.
      * @return self
      */
     public function withRedirect($url, $status = null)
     {
-        $responseWithRedirect = $this->withHeader('Location', (string)$url);
-
+        $responseWithRedirect = $this->withHeader('Location', (string) $url);
+        
         if (is_null($status) && $this->getStatusCode() === 200) {
             $status = 302;
         }
-
-        if (!is_null($status)) {
+        
+        if (! is_null($status)) {
             return $responseWithRedirect->withStatus($status);
         }
-
+        
         return $responseWithRedirect;
     }
 
@@ -298,9 +314,12 @@ class Response extends Message implements ResponseInterface
      * This method prepares the response object to return an HTTP Json
      * response to the client.
      *
-     * @param  mixed  $data   The data
-     * @param  int    $status The HTTP status code.
-     * @param  int    $encodingOptions Json encoding options
+     * @param mixed $data
+     *            The data
+     * @param int $status
+     *            The HTTP status code.
+     * @param int $encodingOptions
+     *            Json encoding options
      * @throws \RuntimeException
      * @return self
      */
@@ -309,12 +328,12 @@ class Response extends Message implements ResponseInterface
         $body = $this->getBody();
         $body->rewind();
         $body->write($json = json_encode($data, $encodingOptions));
-
+        
         // Ensure that the json encoding passed successfully
         if ($json === false) {
             throw new \RuntimeException(json_last_error_msg(), json_last_error());
         }
-
+        
         $responseWithJson = $this->withHeader('Content-Type', 'application/json;charset=utf-8');
         if (isset($status)) {
             return $responseWithJson->withStatus($status);
@@ -331,7 +350,11 @@ class Response extends Message implements ResponseInterface
      */
     public function isEmpty()
     {
-        return in_array($this->getStatusCode(), [204, 205, 304]);
+        return in_array($this->getStatusCode(), [
+            204,
+            205,
+            304
+        ]);
     }
 
     /**
@@ -379,7 +402,12 @@ class Response extends Message implements ResponseInterface
      */
     public function isRedirect()
     {
-        return in_array($this->getStatusCode(), [301, 302, 303, 307]);
+        return in_array($this->getStatusCode(), [
+            301,
+            302,
+            303,
+            307
+        ]);
     }
 
     /**
@@ -399,8 +427,7 @@ class Response extends Message implements ResponseInterface
      *
      * Note: This method is not part of the PSR-7 standard.
      *
-     * @return bool
-     * @api
+     * @return bool @api
      */
     public function isForbidden()
     {
@@ -452,19 +479,14 @@ class Response extends Message implements ResponseInterface
      */
     public function __toString()
     {
-        $output = sprintf(
-            'HTTP/%s %s %s',
-            $this->getProtocolVersion(),
-            $this->getStatusCode(),
-            $this->getReasonPhrase()
-        );
+        $output = sprintf('HTTP/%s %s %s', $this->getProtocolVersion(), $this->getStatusCode(), $this->getReasonPhrase());
         $output .= PHP_EOL;
         foreach ($this->getHeaders() as $name => $values) {
             $output .= sprintf('%s: %s', $name, $this->getHeaderLine($name)) . PHP_EOL;
         }
         $output .= PHP_EOL;
-        $output .= (string)$this->getBody();
-
+        $output .= (string) $this->getBody();
+        
         return $output;
     }
 }

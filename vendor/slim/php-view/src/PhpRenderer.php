@@ -13,18 +13,22 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class PhpRenderer
+ * 
  * @package Slim\Views
- *
- * Render PHP view scripts into a PSR-7 Response object
+ *         
+ *          Render PHP view scripts into a PSR-7 Response object
  */
 class PhpRenderer
 {
+
     /**
+     *
      * @var string
      */
     protected $templatePath;
 
     /**
+     *
      * @var array
      */
     protected $attributes;
@@ -32,8 +36,8 @@ class PhpRenderer
     /**
      * SlimRenderer constructor.
      *
-     * @param string $templatePath
-     * @param array $attributes
+     * @param string $templatePath            
+     * @param array $attributes            
      */
     public function __construct($templatePath = "", $attributes = [])
     {
@@ -48,9 +52,9 @@ class PhpRenderer
      *
      * throws RuntimeException if $templatePath . $template does not exist
      *
-     * @param ResponseInterface $response
-     * @param string             $template
-     * @param array              $data
+     * @param ResponseInterface $response            
+     * @param string $template            
+     * @param array $data            
      *
      * @return ResponseInterface
      *
@@ -60,7 +64,7 @@ class PhpRenderer
     public function render(ResponseInterface $response, $template, array $data = [])
     {
         $output = $this->fetch($template, $data);
-
+        
         $response->getBody()->write($output);
         
         return $response;
@@ -79,7 +83,7 @@ class PhpRenderer
     /**
      * Set the attributes for the renderer
      *
-     * @param array $attributes
+     * @param array $attributes            
      */
     public function setAttributes(array $attributes)
     {
@@ -89,24 +93,29 @@ class PhpRenderer
     /**
      * Add an attribute
      *
-     * @param $key
-     * @param $value
+     * @param
+     *            $key
+     * @param
+     *            $value
      */
-    public function addAttribute($key, $value) {
+    public function addAttribute($key, $value)
+    {
         $this->attributes[$key] = $value;
     }
 
     /**
      * Retrieve an attribute
      *
-     * @param $key
+     * @param
+     *            $key
      * @return mixed
      */
-    public function getAttribute($key) {
-        if (!isset($this->attributes[$key])) {
+    public function getAttribute($key)
+    {
+        if (! isset($this->attributes[$key])) {
             return false;
         }
-
+        
         return $this->attributes[$key];
     }
 
@@ -123,7 +132,7 @@ class PhpRenderer
     /**
      * Set the template path
      *
-     * @param string $templatePath
+     * @param string $templatePath            
      */
     public function setTemplatePath($templatePath)
     {
@@ -137,45 +146,48 @@ class PhpRenderer
      *
      * throws RuntimeException if $templatePath . $template does not exist
      *
-     * @param $template
-     * @param array $data
+     * @param
+     *            $template
+     * @param array $data            
      *
      * @return mixed
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function fetch($template, array $data = []) {
+    public function fetch($template, array $data = [])
+    {
         if (isset($data['template'])) {
             throw new \InvalidArgumentException("Duplicate template key found");
         }
-
-        if (!is_file($this->templatePath . $template)) {
+        
+        if (! is_file($this->templatePath . $template)) {
             throw new \RuntimeException("View cannot render `$template` because the template does not exist");
         }
-
-
+        
         /*
-        foreach ($data as $k=>$val) {
-            if (in_array($k, array_keys($this->attributes))) {
-                throw new \InvalidArgumentException("Duplicate key found in data and renderer attributes. " . $k);
-            }
-        }
-        */
+         * foreach ($data as $k=>$val) {
+         * if (in_array($k, array_keys($this->attributes))) {
+         * throw new \InvalidArgumentException("Duplicate key found in data and renderer attributes. " . $k);
+         * }
+         * }
+         */
         $data = array_merge($this->attributes, $data);
-
+        
         ob_start();
         $this->protectedIncludeScope($this->templatePath . $template, $data);
         $output = ob_get_clean();
-
+        
         return $output;
     }
 
     /**
-     * @param string $template
-     * @param array $data
+     *
+     * @param string $template            
+     * @param array $data            
      */
-    protected function protectedIncludeScope ($template, array $data) {
+    protected function protectedIncludeScope($template, array $data)
+    {
         extract($data);
         include $template;
     }

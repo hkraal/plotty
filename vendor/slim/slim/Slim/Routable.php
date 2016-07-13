@@ -14,12 +14,12 @@ use Interop\Container\ContainerInterface;
  * A routable, middleware-aware object
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 abstract class Routable
 {
     use CallableResolverAwareTrait;
-    
+
     /**
      * Route callable
      *
@@ -71,7 +71,7 @@ abstract class Routable
     /**
      * Set container for use with resolveCallable
      *
-     * @param ContainerInterface $container
+     * @param ContainerInterface $container            
      *
      * @return self
      */
@@ -84,8 +84,9 @@ abstract class Routable
     /**
      * Prepend middleware to the middleware collection
      *
-     * @param callable|string $callable The callback routine
-     *
+     * @param callable|string $callable
+     *            The callback routine
+     *            
      * @return static
      */
     public function add($callable)
@@ -93,7 +94,7 @@ abstract class Routable
         $this->middleware[] = new DeferredCallable($callable, $this->container);
         return $this;
     }
-    
+
     /**
      * Set the route pattern
      *

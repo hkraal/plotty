@@ -16,17 +16,21 @@ use Psr\Http\Message\ServerRequestInterface;
  * Router Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface RouterInterface
 {
+
     /**
      * Add route
      *
-     * @param string[] $methods Array of HTTP methods
-     * @param string   $pattern The route pattern
-     * @param callable $handler The route callable
-     *
+     * @param string[] $methods
+     *            Array of HTTP methods
+     * @param string $pattern
+     *            The route pattern
+     * @param callable $handler
+     *            The route callable
+     *            
      * @return RouteInterface
      */
     public function map($methods, $pattern, $handler);
@@ -34,20 +38,23 @@ interface RouterInterface
     /**
      * Dispatch router for HTTP request
      *
-     * @param  ServerRequestInterface $request The current HTTP request object
-     *
+     * @param ServerRequestInterface $request
+     *            The current HTTP request object
+     *            
      * @return array
      *
-     * @link   https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
+     * @link https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
      */
     public function dispatch(ServerRequestInterface $request);
 
     /**
      * Add a route group to the array
      *
-     * @param string   $pattern The group pattern
-     * @param callable $callable A group callable
-     *
+     * @param string $pattern
+     *            The group pattern
+     * @param callable $callable
+     *            A group callable
+     *            
      * @return RouteGroupInterface
      */
     public function pushGroup($pattern, $callable);
@@ -62,17 +69,20 @@ interface RouterInterface
     /**
      * Get named route object
      *
-     * @param string $name        Route name
-     *
+     * @param string $name
+     *            Route name
+     *            
      * @return \Slim\Interfaces\RouteInterface
      *
-     * @throws RuntimeException   If named route does not exist
+     * @throws RuntimeException If named route does not exist
      */
     public function getNamedRoute($name);
 
     /**
-     * @param $identifier
      *
+     * @param
+     *            $identifier
+     *            
      * @return \Slim\Interfaces\RouteInterface
      */
     public function lookupRoute($identifier);
@@ -80,13 +90,16 @@ interface RouterInterface
     /**
      * Build the path for a named route excluding the base path
      *
-     * @param string $name        Route name
-     * @param array  $data        Named argument replacement data
-     * @param array  $queryParams Optional query string parameters
-     *
+     * @param string $name
+     *            Route name
+     * @param array $data
+     *            Named argument replacement data
+     * @param array $queryParams
+     *            Optional query string parameters
+     *            
      * @return string
      *
-     * @throws RuntimeException         If named route does not exist
+     * @throws RuntimeException If named route does not exist
      * @throws InvalidArgumentException If required data not provided
      */
     public function relativePathFor($name, array $data = [], array $queryParams = []);
@@ -94,13 +107,16 @@ interface RouterInterface
     /**
      * Build the path for a named route including the base path
      *
-     * @param string $name        Route name
-     * @param array  $data        Named argument replacement data
-     * @param array  $queryParams Optional query string parameters
-     *
+     * @param string $name
+     *            Route name
+     * @param array $data
+     *            Named argument replacement data
+     * @param array $queryParams
+     *            Optional query string parameters
+     *            
      * @return string
      *
-     * @throws RuntimeException         If named route does not exist
+     * @throws RuntimeException If named route does not exist
      * @throws InvalidArgumentException If required data not provided
      */
     public function pathFor($name, array $data = [], array $queryParams = []);

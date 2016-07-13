@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Acme;
 
 class Tester
 {
+
     public function test($handler, $record)
     {
         $handler->handle($record);
@@ -23,7 +23,6 @@ function tester($handler, $record)
 {
     $handler->handle($record);
 }
-
 namespace Monolog\Processor;
 
 use Monolog\Logger;
@@ -32,21 +31,22 @@ use Monolog\Handler\TestHandler;
 
 class IntrospectionProcessorTest extends TestCase
 {
+
     public function getHandler()
     {
         $processor = new IntrospectionProcessor();
         $handler = new TestHandler();
         $handler->pushProcessor($processor);
-
+        
         return $handler;
     }
 
     public function testProcessorFromClass()
     {
         $handler = $this->getHandler();
-        $tester = new \Acme\Tester;
+        $tester = new \Acme\Tester();
         $tester->test($handler, $this->getRecord());
-        list($record) = $handler->getRecords();
+        list ($record) = $handler->getRecords();
         $this->assertEquals(__FILE__, $record['extra']['file']);
         $this->assertEquals(18, $record['extra']['line']);
         $this->assertEquals('Acme\Tester', $record['extra']['class']);
@@ -57,7 +57,7 @@ class IntrospectionProcessorTest extends TestCase
     {
         $handler = $this->getHandler();
         \Acme\tester($handler, $this->getRecord());
-        list($record) = $handler->getRecords();
+        list ($record) = $handler->getRecords();
         $this->assertEquals(__FILE__, $record['extra']['file']);
         $this->assertEquals(24, $record['extra']['line']);
         $this->assertEquals(null, $record['extra']['class']);
@@ -68,14 +68,14 @@ class IntrospectionProcessorTest extends TestCase
     {
         $input = array(
             'level' => Logger::DEBUG,
-            'extra' => array(),
+            'extra' => array()
         );
-
+        
         $expected = $input;
-
+        
         $processor = new IntrospectionProcessor(Logger::CRITICAL);
         $actual = $processor($input);
-
+        
         $this->assertEquals($expected, $actual);
     }
 
@@ -83,20 +83,20 @@ class IntrospectionProcessorTest extends TestCase
     {
         $input = array(
             'level' => Logger::CRITICAL,
-            'extra' => array(),
+            'extra' => array()
         );
-
+        
         $expected = $input;
         $expected['extra'] = array(
             'file' => null,
             'line' => null,
             'class' => 'ReflectionMethod',
-            'function' => 'invokeArgs',
+            'function' => 'invokeArgs'
         );
-
+        
         $processor = new IntrospectionProcessor(Logger::CRITICAL);
         $actual = $processor($input);
-
+        
         $this->assertEquals($expected, $actual);
     }
 
@@ -104,20 +104,20 @@ class IntrospectionProcessorTest extends TestCase
     {
         $input = array(
             'level' => Logger::EMERGENCY,
-            'extra' => array(),
+            'extra' => array()
         );
-
+        
         $expected = $input;
         $expected['extra'] = array(
             'file' => null,
             'line' => null,
             'class' => 'ReflectionMethod',
-            'function' => 'invokeArgs',
+            'function' => 'invokeArgs'
         );
-
+        
         $processor = new IntrospectionProcessor(Logger::CRITICAL);
         $actual = $processor($input);
-
+        
         $this->assertEquals($expected, $actual);
     }
 }

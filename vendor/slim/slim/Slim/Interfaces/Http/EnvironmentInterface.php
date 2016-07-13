@@ -12,9 +12,10 @@ namespace Slim\Interfaces\Http;
  * Environment Interface
  *
  * @package Slim
- * @since   3.0.0
+ * @since 3.0.0
  */
 interface EnvironmentInterface
 {
+
     public static function mock(array $settings = []);
 }

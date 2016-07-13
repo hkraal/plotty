@@ -16,10 +16,11 @@ namespace Slim\Interfaces;
  */
 interface CallableResolverInterface
 {
+
     /**
      * Invoke the resolved callable.
      *
-     * @param mixed $toResolve
+     * @param mixed $toResolve            
      *
      * @return callable
      */

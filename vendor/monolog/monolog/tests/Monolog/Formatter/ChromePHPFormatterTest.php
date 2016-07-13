@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 use Monolog\Logger;
 
 class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @covers Monolog\Formatter\ChromePHPFormatter::format
      */
@@ -25,27 +25,32 @@ class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
             'level' => Logger::ERROR,
             'level_name' => 'ERROR',
             'channel' => 'meh',
-            'context' => array('from' => 'logger'),
-            'datetime' => new \DateTime("@0"),
-            'extra' => array('ip' => '127.0.0.1'),
-            'message' => 'log',
-        );
-
-        $message = $formatter->format($record);
-
-        $this->assertEquals(
-            array(
-                'meh',
-                array(
-                    'message' => 'log',
-                    'context' => array('from' => 'logger'),
-                    'extra' => array('ip' => '127.0.0.1'),
-                ),
-                'unknown',
-                'error',
+            'context' => array(
+                'from' => 'logger'
             ),
-            $message
+            'datetime' => new \DateTime("@0"),
+            'extra' => array(
+                'ip' => '127.0.0.1'
+            ),
+            'message' => 'log'
         );
+        
+        $message = $formatter->format($record);
+        
+        $this->assertEquals(array(
+            'meh',
+            array(
+                'message' => 'log',
+                'context' => array(
+                    'from' => 'logger'
+                ),
+                'extra' => array(
+                    'ip' => '127.0.0.1'
+                )
+            ),
+            'unknown',
+            'error'
+        ), $message);
     }
 
     /**
@@ -58,27 +63,34 @@ class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
             'level' => Logger::CRITICAL,
             'level_name' => 'CRITICAL',
             'channel' => 'meh',
-            'context' => array('from' => 'logger'),
-            'datetime' => new \DateTime("@0"),
-            'extra' => array('ip' => '127.0.0.1', 'file' => 'test', 'line' => 14),
-            'message' => 'log',
-        );
-
-        $message = $formatter->format($record);
-
-        $this->assertEquals(
-            array(
-                'meh',
-                array(
-                    'message' => 'log',
-                    'context' => array('from' => 'logger'),
-                    'extra' => array('ip' => '127.0.0.1'),
-                ),
-                'test : 14',
-                'error',
+            'context' => array(
+                'from' => 'logger'
             ),
-            $message
+            'datetime' => new \DateTime("@0"),
+            'extra' => array(
+                'ip' => '127.0.0.1',
+                'file' => 'test',
+                'line' => 14
+            ),
+            'message' => 'log'
         );
+        
+        $message = $formatter->format($record);
+        
+        $this->assertEquals(array(
+            'meh',
+            array(
+                'message' => 'log',
+                'context' => array(
+                    'from' => 'logger'
+                ),
+                'extra' => array(
+                    'ip' => '127.0.0.1'
+                )
+            ),
+            'test : 14',
+            'error'
+        ), $message);
     }
 
     /**
@@ -94,20 +106,17 @@ class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
             'context' => array(),
             'datetime' => new \DateTime("@0"),
             'extra' => array(),
-            'message' => 'log',
+            'message' => 'log'
         );
-
+        
         $message = $formatter->format($record);
-
-        $this->assertEquals(
-            array(
-                'meh',
-                'log',
-                'unknown',
-                'log',
-            ),
-            $message
-        );
+        
+        $this->assertEquals(array(
+            'meh',
+            'log',
+            'unknown',
+            'log'
+        ), $message);
     }
 
     /**
@@ -124,7 +133,7 @@ class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
                 'context' => array(),
                 'datetime' => new \DateTime("@0"),
                 'extra' => array(),
-                'message' => 'log',
+                'message' => 'log'
             ),
             array(
                 'level' => Logger::WARNING,
@@ -133,26 +142,23 @@ class ChromePHPFormatterTest extends \PHPUnit_Framework_TestCase
                 'context' => array(),
                 'datetime' => new \DateTime("@0"),
                 'extra' => array(),
-                'message' => 'log2',
-            ),
+                'message' => 'log2'
+            )
         );
-
-        $this->assertEquals(
+        
+        $this->assertEquals(array(
             array(
-                array(
-                    'meh',
-                    'log',
-                    'unknown',
-                    'info',
-                ),
-                array(
-                    'foo',
-                    'log2',
-                    'unknown',
-                    'warn',
-                ),
+                'meh',
+                'log',
+                'unknown',
+                'info'
             ),
-            $formatter->formatBatch($records)
-        );
+            array(
+                'foo',
+                'log2',
+                'unknown',
+                'warn'
+            )
+        ), $formatter->formatBatch($records));
     }
 }

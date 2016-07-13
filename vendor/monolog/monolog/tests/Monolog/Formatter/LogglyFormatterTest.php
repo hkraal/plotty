@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Formatter;
 
 use Monolog\TestCase;
 
 class LogglyFormatterTest extends TestCase
 {
+
     /**
      * @covers Monolog\Formatter\LogglyFormatter::__construct
      */

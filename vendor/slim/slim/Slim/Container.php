@@ -22,16 +22,16 @@ use Slim\Exception\ContainerException as SlimContainerException;
  * Slim\App expects a container that implements Interop\Container\ContainerInterface
  * with these service keys configured and ready for use:
  *
- *  - settings: an array or instance of \ArrayAccess
- *  - environment: an instance of \Slim\Interfaces\Http\EnvironmentInterface
- *  - request: an instance of \Psr\Http\Message\ServerRequestInterface
- *  - response: an instance of \Psr\Http\Message\ResponseInterface
- *  - router: an instance of \Slim\Interfaces\RouterInterface
- *  - foundHandler: an instance of \Slim\Interfaces\InvocationStrategyInterface
- *  - errorHandler: a callable with the signature: function($request, $response, $exception)
- *  - notFoundHandler: a callable with the signature: function($request, $response)
- *  - notAllowedHandler: a callable with the signature: function($request, $response, $allowedHttpMethods)
- *  - callableResolver: an instance of callableResolver
+ * - settings: an array or instance of \ArrayAccess
+ * - environment: an instance of \Slim\Interfaces\Http\EnvironmentInterface
+ * - request: an instance of \Psr\Http\Message\ServerRequestInterface
+ * - response: an instance of \Psr\Http\Message\ResponseInterface
+ * - router: an instance of \Slim\Interfaces\RouterInterface
+ * - foundHandler: an instance of \Slim\Interfaces\InvocationStrategyInterface
+ * - errorHandler: a callable with the signature: function($request, $response, $exception)
+ * - notFoundHandler: a callable with the signature: function($request, $response)
+ * - notAllowedHandler: a callable with the signature: function($request, $response, $allowedHttpMethods)
+ * - callableResolver: an instance of callableResolver
  *
  * @property-read array settings
  * @property-read \Slim\Interfaces\Http\EnvironmentInterface environment
@@ -46,6 +46,7 @@ use Slim\Exception\ContainerException as SlimContainerException;
  */
 class Container extends PimpleContainer implements ContainerInterface
 {
+
     /**
      * Default settings
      *
@@ -58,18 +59,19 @@ class Container extends PimpleContainer implements ContainerInterface
         'determineRouteBeforeAppMiddleware' => false,
         'displayErrorDetails' => false,
         'addContentLengthHeader' => true,
-        'routerCacheFile' => false,
+        'routerCacheFile' => false
     ];
 
     /**
      * Create new container
      *
-     * @param array $values The parameters or objects.
+     * @param array $values
+     *            The parameters or objects.
      */
     public function __construct(array $values = [])
     {
         parent::__construct($values);
-
+        
         $userSettings = isset($values['settings']) ? $values['settings'] : [];
         $this->registerDefaultServices($userSettings);
     }
@@ -80,14 +82,15 @@ class Container extends PimpleContainer implements ContainerInterface
      * All services are shared - that is, they are registered such that the
      * same instance is returned on subsequent calls.
      *
-     * @param array $userSettings Associative array of application settings
-     *
+     * @param array $userSettings
+     *            Associative array of application settings
+     *            
      * @return void
      */
     private function registerDefaultServices($userSettings)
     {
         $defaultSettings = $this->defaultSettings;
-
+        
         /**
          * This service MUST return an array or an
          * instance of \ArrayAccess.
@@ -97,39 +100,38 @@ class Container extends PimpleContainer implements ContainerInterface
         $this['settings'] = function () use ($userSettings, $defaultSettings) {
             return new Collection(array_merge($defaultSettings, $userSettings));
         };
-
+        
         $defaultProvider = new DefaultServicesProvider();
         $defaultProvider->register($this);
     }
 
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * Methods to satisfy Interop\Container\ContainerInterface
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
+    
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
-     * @param string $id Identifier of the entry to look for.
-     *
-     * @throws ContainerValueNotFoundException  No entry was found for this identifier.
-     * @throws ContainerException               Error while retrieving the entry.
-     *
+     * @param string $id
+     *            Identifier of the entry to look for.
+     *            
+     * @throws ContainerValueNotFoundException No entry was found for this identifier.
+     * @throws ContainerException Error while retrieving the entry.
+     *        
      * @return mixed Entry.
      */
     public function get($id)
     {
-        if (!$this->offsetExists($id)) {
+        if (! $this->offsetExists($id)) {
             throw new ContainerValueNotFoundException(sprintf('Identifier "%s" is not defined.', $id));
         }
         try {
             return $this->offsetGet($id);
         } catch (\InvalidArgumentException $exception) {
             if ($this->exceptionThrownByContainer($exception)) {
-                throw new SlimContainerException(
-                    sprintf('Container error while retrieving "%s"', $id),
-                    null,
-                    $exception
-                );
+                throw new SlimContainerException(sprintf('Container error while retrieving "%s"', $id), null, $exception);
             } else {
                 throw $exception;
             }
@@ -137,17 +139,18 @@ class Container extends PimpleContainer implements ContainerInterface
     }
 
     /**
-     * Tests whether an exception needs to be recast for compliance with Container-Interop.  This will be if the
+     * Tests whether an exception needs to be recast for compliance with Container-Interop.
+     * This will be if the
      * exception was thrown by Pimple.
      *
-     * @param \InvalidArgumentException $exception
+     * @param \InvalidArgumentException $exception            
      *
      * @return bool
      */
     private function exceptionThrownByContainer(\InvalidArgumentException $exception)
     {
         $trace = $exception->getTrace()[0];
-
+        
         return $trace['class'] === PimpleContainer::class && $trace['function'] === 'offsetGet';
     }
 
@@ -155,8 +158,9 @@ class Container extends PimpleContainer implements ContainerInterface
      * Returns true if the container can return an entry for the given identifier.
      * Returns false otherwise.
      *
-     * @param string $id Identifier of the entry to look for.
-     *
+     * @param string $id
+     *            Identifier of the entry to look for.
+     *            
      * @return boolean
      */
     public function has($id)
@@ -164,11 +168,11 @@ class Container extends PimpleContainer implements ContainerInterface
         return $this->offsetExists($id);
     }
 
-
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * Magic methods for convenience
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
     public function __get($name)
     {
         return $this->get($name);

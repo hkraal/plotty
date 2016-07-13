@@ -26,6 +26,7 @@ use Slim\Interfaces\Http\HeadersInterface;
  */
 class Headers extends Collection implements HeadersInterface
 {
+
     /**
      * Special HTTP headers that do not have the "HTTP_" prefix
      *
@@ -37,15 +38,16 @@ class Headers extends Collection implements HeadersInterface
         'PHP_AUTH_USER' => 1,
         'PHP_AUTH_PW' => 1,
         'PHP_AUTH_DIGEST' => 1,
-        'AUTH_TYPE' => 1,
+        'AUTH_TYPE' => 1
     ];
 
     /**
      * Create new headers collection with data extracted from
      * the application Environment object
      *
-     * @param Environment $environment The Slim application Environment
-     *
+     * @param Environment $environment
+     *            The Slim application Environment
+     *            
      * @return self
      */
     public static function createFromEnvironment(Environment $environment)
@@ -56,11 +58,11 @@ class Headers extends Collection implements HeadersInterface
             $key = strtoupper($key);
             if (isset(static::$special[$key]) || strpos($key, 'HTTP_') === 0) {
                 if ($key !== 'HTTP_CONTENT_LENGTH') {
-                    $data[$key] =  $value;
+                    $data[$key] = $value;
                 }
             }
         }
-
+        
         return new static($data);
     }
 
@@ -68,15 +70,15 @@ class Headers extends Collection implements HeadersInterface
      * If HTTP_AUTHORIZATION does not exist tries to get it from
      * getallheaders() when available.
      *
-     * @param Environment $environment The Slim application Environment
-     *
+     * @param Environment $environment
+     *            The Slim application Environment
+     *            
      * @return Environment
      */
-
     public static function determineAuthorization(Environment $environment)
     {
         $authorization = $environment->get('HTTP_AUTHORIZATION');
-
+        
         if (null === $authorization && is_callable('getallheaders')) {
             $headers = getallheaders();
             $headers = array_change_key_case($headers, CASE_LOWER);
@@ -84,7 +86,7 @@ class Headers extends Collection implements HeadersInterface
                 $environment->set('HTTP_AUTHORIZATION', $headers['authorization']);
             }
         }
-
+        
         return $environment;
     }
 
@@ -102,7 +104,7 @@ class Headers extends Collection implements HeadersInterface
         foreach ($all as $key => $props) {
             $out[$props['originalKey']] = $props['value'];
         }
-
+        
         return $out;
     }
 
@@ -112,13 +114,17 @@ class Headers extends Collection implements HeadersInterface
      * This method sets a header value. It replaces
      * any values that may already exist for the header name.
      *
-     * @param string $key   The case-insensitive header name
-     * @param string $value The header value
+     * @param string $key
+     *            The case-insensitive header name
+     * @param string $value
+     *            The header value
      */
     public function set($key, $value)
     {
-        if (!is_array($value)) {
-            $value = [$value];
+        if (! is_array($value)) {
+            $value = [
+                $value
+            ];
         }
         parent::set($this->normalizeKey($key), [
             'value' => $value,
@@ -129,9 +135,11 @@ class Headers extends Collection implements HeadersInterface
     /**
      * Get HTTP header value
      *
-     * @param  string  $key     The case-insensitive header name
-     * @param  mixed   $default The default value if key does not exist
-     *
+     * @param string $key
+     *            The case-insensitive header name
+     * @param mixed $default
+     *            The default value if key does not exist
+     *            
      * @return string[]
      */
     public function get($key, $default = null)
@@ -139,16 +147,18 @@ class Headers extends Collection implements HeadersInterface
         if ($this->has($key)) {
             return parent::get($this->normalizeKey($key))['value'];
         }
-
+        
         return $default;
     }
 
     /**
      * Get HTTP header key as originally specified
      *
-     * @param  string   $key     The case-insensitive header name
-     * @param  mixed    $default The default value if key does not exist
-     *
+     * @param string $key
+     *            The case-insensitive header name
+     * @param mixed $default
+     *            The default value if key does not exist
+     *            
      * @return string
      */
     public function getOriginalKey($key, $default = null)
@@ -156,7 +166,7 @@ class Headers extends Collection implements HeadersInterface
         if ($this->has($key)) {
             return parent::get($this->normalizeKey($key))['originalKey'];
         }
-
+        
         return $default;
     }
 
@@ -167,21 +177,26 @@ class Headers extends Collection implements HeadersInterface
      * this method _appends_ this new value to any values
      * that already exist for this header name.
      *
-     * @param string       $key   The case-insensitive header name
-     * @param array|string $value The new header value(s)
+     * @param string $key
+     *            The case-insensitive header name
+     * @param array|string $value
+     *            The new header value(s)
      */
     public function add($key, $value)
     {
         $oldValues = $this->get($key, []);
-        $newValues = is_array($value) ? $value : [$value];
+        $newValues = is_array($value) ? $value : [
+            $value
+        ];
         $this->set($key, array_merge($oldValues, array_values($newValues)));
     }
 
     /**
      * Does this collection have a given header?
      *
-     * @param  string $key The case-insensitive header name
-     *
+     * @param string $key
+     *            The case-insensitive header name
+     *            
      * @return bool
      */
     public function has($key)
@@ -192,7 +207,8 @@ class Headers extends Collection implements HeadersInterface
     /**
      * Remove header from collection
      *
-     * @param  string $key The case-insensitive header name
+     * @param string $key
+     *            The case-insensitive header name
      */
     public function remove($key)
     {
@@ -206,8 +222,9 @@ class Headers extends Collection implements HeadersInterface
      * normalized form. This is how we enable case-insensitive
      * header names in the other methods in this class.
      *
-     * @param  string $key The case-insensitive header name
-     *
+     * @param string $key
+     *            The case-insensitive header name
+     *            
      * @return string Normalized header name
      */
     public function normalizeKey($key)
@@ -216,7 +233,7 @@ class Headers extends Collection implements HeadersInterface
         if (strpos($key, 'http-') === 0) {
             $key = substr($key, 5);
         }
-
+        
         return $key;
     }
 }

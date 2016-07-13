@@ -13,6 +13,7 @@ namespace Slim\Http;
  */
 class RequestBody extends Body
 {
+
     /**
      * Create a new RequestBody.
      */
@@ -21,7 +22,7 @@ class RequestBody extends Body
         $stream = fopen('php://temp', 'w+');
         stream_copy_to_stream(fopen('php://input', 'r'), $stream);
         rewind($stream);
-
+        
         parent::__construct($stream);
     }
 }

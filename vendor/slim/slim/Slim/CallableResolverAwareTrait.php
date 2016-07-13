@@ -23,11 +23,12 @@ use Slim\Interfaces\CallableResolverInterface;
  */
 trait CallableResolverAwareTrait
 {
+
     /**
      * Resolve a string of the format 'class:method' into a closure that the
      * router can dispatch.
      *
-     * @param callable|string $callable
+     * @param callable|string $callable            
      *
      * @return \Closure
      *
@@ -35,13 +36,13 @@ trait CallableResolverAwareTrait
      */
     protected function resolveCallable($callable)
     {
-        if (!$this->container instanceof ContainerInterface) {
+        if (! $this->container instanceof ContainerInterface) {
             return $callable;
         }
-
+        
         /** @var CallableResolverInterface $resolver */
         $resolver = $this->container->get('callableResolver');
-
+        
         return $resolver->resolve($callable);
     }
 }

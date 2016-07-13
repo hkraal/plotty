@@ -21,12 +21,15 @@ use UnexpectedValueException;
  */
 class NotFound extends AbstractHandler
 {
+
     /**
      * Invoke not found handler
      *
-     * @param  ServerRequestInterface $request  The most recent Request object
-     * @param  ResponseInterface      $response The most recent Response object
-     *
+     * @param ServerRequestInterface $request
+     *            The most recent Request object
+     * @param ResponseInterface $response
+     *            The most recent Response object
+     *            
      * @return ResponseInterface
      * @throws UnexpectedValueException
      */
@@ -37,12 +40,12 @@ class NotFound extends AbstractHandler
             case 'application/json':
                 $output = $this->renderJsonNotFoundOutput();
                 break;
-
+            
             case 'text/xml':
             case 'application/xml':
                 $output = $this->renderXmlNotFoundOutput();
                 break;
-
+            
             case 'text/html':
                 $output = $this->renderHtmlNotFoundOutput($request);
                 break;
@@ -50,13 +53,13 @@ class NotFound extends AbstractHandler
             default:
                 throw new UnexpectedValueException('Cannot render unknown content type ' . $contentType);
         }
-
+        
         $body = new Body(fopen('php://temp', 'r+'));
         $body->write($output);
-
+        
         return $response->withStatus(404)
-                        ->withHeader('Content-Type', $contentType)
-                        ->withBody($body);
+            ->withHeader('Content-Type', $contentType)
+            ->withBody($body);
     }
 
     /**
@@ -82,13 +85,17 @@ class NotFound extends AbstractHandler
     /**
      * Return a response for text/html content not found
      *
-     * @param  ServerRequestInterface $request  The most recent Request object
-     *
+     * @param ServerRequestInterface $request
+     *            The most recent Request object
+     *            
      * @return ResponseInterface
      */
     protected function renderHtmlNotFoundOutput(ServerRequestInterface $request)
     {
-        $homeUrl = (string)($request->getUri()->withPath('')->withQuery('')->withFragment(''));
+        $homeUrl = (string) ($request->getUri()
+            ->withPath('')
+            ->withQuery('')
+            ->withFragment(''));
         return <<<END
 <html>
     <head>

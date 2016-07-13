@@ -72,18 +72,23 @@ class Route extends Routable implements RouteInterface
     /**
      * Create new route
      *
-     * @param string[]     $methods The route HTTP methods
-     * @param string       $pattern The route pattern
-     * @param callable     $callable The route callable
-     * @param int          $identifier The route identifier
-     * @param RouteGroup[] $groups The parent route groups
+     * @param string[] $methods
+     *            The route HTTP methods
+     * @param string $pattern
+     *            The route pattern
+     * @param callable $callable
+     *            The route callable
+     * @param int $identifier
+     *            The route identifier
+     * @param RouteGroup[] $groups
+     *            The parent route groups
      */
     public function __construct($methods, $pattern, $callable, $groups = [], $identifier = 0)
     {
-        $this->methods  = $methods;
-        $this->pattern  = $pattern;
+        $this->methods = $methods;
+        $this->pattern = $pattern;
         $this->callable = $callable;
-        $this->groups   = $groups;
+        $this->groups = $groups;
         $this->identifier = 'route' . $identifier;
     }
 
@@ -95,18 +100,18 @@ class Route extends Routable implements RouteInterface
         if ($this->finalized) {
             return;
         }
-
+        
         $groupMiddleware = [];
         foreach ($this->getGroups() as $group) {
             $groupMiddleware = array_merge($group->getMiddleware(), $groupMiddleware);
         }
-
+        
         $this->middleware = array_merge($this->middleware, $groupMiddleware);
-
+        
         foreach ($this->getMiddleware() as $middleware) {
             $this->addMiddleware($middleware);
         }
-
+        
         $this->finalized = true;
     }
 
@@ -175,13 +180,17 @@ class Route extends Routable implements RouteInterface
      *
      * One of: false, 'prepend' or 'append'
      *
-     * @param boolean|string $mode
+     * @param boolean|string $mode            
      *
      * @throws InvalidArgumentException If an unknown buffering mode is specified
      */
     public function setOutputBuffering($mode)
     {
-        if (!in_array($mode, [false, 'prepend', 'append'], true)) {
+        if (! in_array($mode, [
+            false,
+            'prepend',
+            'append'
+        ], true)) {
             throw new InvalidArgumentException('Unknown output buffering mode');
         }
         $this->outputBuffering = $mode;
@@ -190,7 +199,7 @@ class Route extends Routable implements RouteInterface
     /**
      * Set route name
      *
-     * @param string $name
+     * @param string $name            
      *
      * @return self
      *
@@ -198,7 +207,7 @@ class Route extends Routable implements RouteInterface
      */
     public function setName($name)
     {
-        if (!is_string($name)) {
+        if (! is_string($name)) {
             throw new InvalidArgumentException('Route name must be a string');
         }
         $this->name = $name;
@@ -208,8 +217,8 @@ class Route extends Routable implements RouteInterface
     /**
      * Set a route argument
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name            
+     * @param string $value            
      *
      * @return self
      */
@@ -222,7 +231,7 @@ class Route extends Routable implements RouteInterface
     /**
      * Replace route arguments
      *
-     * @param array $arguments
+     * @param array $arguments            
      *
      * @return self
      */
@@ -245,8 +254,8 @@ class Route extends Routable implements RouteInterface
     /**
      * Retrieve a specific route argument
      *
-     * @param string $name
-     * @param mixed $default
+     * @param string $name            
+     * @param mixed $default            
      *
      * @return mixed
      */
@@ -258,15 +267,17 @@ class Route extends Routable implements RouteInterface
         return $default;
     }
 
-    /********************************************************************************
+    /**
+     * ******************************************************************************
      * Route Runner
-     *******************************************************************************/
-
+     * *****************************************************************************
+     */
+    
     /**
      * Prepare the route for use
      *
-     * @param ServerRequestInterface $request
-     * @param array $arguments
+     * @param ServerRequestInterface $request            
+     * @param array $arguments            
      */
     public function prepare(ServerRequestInterface $request, array $arguments)
     {
@@ -283,8 +294,8 @@ class Route extends Routable implements RouteInterface
      * and captures the resultant HTTP response object. It then sends the response
      * back to the Application.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param ServerRequestInterface $request            
+     * @param ResponseInterface $response            
      *
      * @return ResponseInterface
      */
@@ -292,7 +303,7 @@ class Route extends Routable implements RouteInterface
     {
         // Finalise route now that we are about to run it
         $this->finalize();
-
+        
         // Traverse middleware stack and fetch updated response
         return $this->callMiddlewareStack($request, $response);
     }
@@ -304,18 +315,20 @@ class Route extends Routable implements RouteInterface
      * registered for the route, each callable middleware is invoked in
      * the order specified.
      *
-     * @param ServerRequestInterface $request  The current Request object
-     * @param ResponseInterface      $response The current Response object
+     * @param ServerRequestInterface $request
+     *            The current Request object
+     * @param ResponseInterface $response
+     *            The current Response object
      * @return \Psr\Http\Message\ResponseInterface
-     * @throws \Exception  if the route callable throws an exception
+     * @throws \Exception if the route callable throws an exception
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->callable = $this->resolveCallable($this->callable);
-
+        
         /** @var InvocationStrategyInterface $handler */
         $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
-
+        
         // invoke route callable
         if ($this->outputBuffering === false) {
             $newResponse = $handler($this->callable, $request, $response, $this->arguments);
@@ -329,7 +342,7 @@ class Route extends Routable implements RouteInterface
                 throw $e;
             }
         }
-
+        
         if ($newResponse instanceof ResponseInterface) {
             // if route callback returns a ResponseInterface, then use it
             $response = $newResponse;
@@ -339,8 +352,8 @@ class Route extends Routable implements RouteInterface
                 $response->getBody()->write($newResponse);
             }
         }
-
-        if (!empty($output) && $response->getBody()->isWritable()) {
+        
+        if (! empty($output) && $response->getBody()->isWritable()) {
             if ($this->outputBuffering === 'prepend') {
                 // prepend output buffer content
                 $body = new Http\Body(fopen('php://temp', 'r+'));
@@ -351,7 +364,7 @@ class Route extends Routable implements RouteInterface
                 $response->getBody()->write($output);
             }
         }
-
+        
         return $response;
     }
 }

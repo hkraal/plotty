@@ -8,15 +8,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler\SyslogUdp;
 
 class UdpSocket
 {
+
     const DATAGRAM_MAX_LENGTH = 65023;
 
     protected $ip;
+
     protected $port;
+
     protected $socket;
 
     public function __construct($ip, $port = 514)
@@ -41,8 +43,8 @@ class UdpSocket
 
     protected function send($chunk)
     {
-        if (!is_resource($this->socket)) {
-            throw new \LogicException('The UdpSocket to '.$this->ip.':'.$this->port.' has been closed and can not be written to anymore');
+        if (! is_resource($this->socket)) {
+            throw new \LogicException('The UdpSocket to ' . $this->ip . ':' . $this->port . ' has been closed and can not be written to anymore');
         }
         socket_sendto($this->socket, $chunk, strlen($chunk), $flags = 0, $this->ip, $this->port);
     }
@@ -50,7 +52,7 @@ class UdpSocket
     protected function assembleMessage($line, $header)
     {
         $chunkSize = self::DATAGRAM_MAX_LENGTH - strlen($header);
-
+        
         return $header . substr($line, 0, $chunkSize);
     }
 }

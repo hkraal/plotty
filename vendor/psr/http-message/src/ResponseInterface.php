@@ -1,5 +1,4 @@
 <?php
-
 namespace Psr\Http\Message;
 
 /**
@@ -19,6 +18,7 @@ namespace Psr\Http\Message;
  */
 interface ResponseInterface extends MessageInterface
 {
+
     /**
      * Gets the response status code.
      *
@@ -42,10 +42,12 @@ interface ResponseInterface extends MessageInterface
      *
      * @link http://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @param int $code The 3-digit integer result code to set.
-     * @param string $reasonPhrase The reason phrase to use with the
-     *     provided status code; if none is provided, implementations MAY
-     *     use the defaults as suggested in the HTTP specification.
+     * @param int $code
+     *            The 3-digit integer result code to set.
+     * @param string $reasonPhrase
+     *            The reason phrase to use with the
+     *            provided status code; if none is provided, implementations MAY
+     *            use the defaults as suggested in the HTTP specification.
      * @return self
      * @throws \InvalidArgumentException For invalid status code arguments.
      */

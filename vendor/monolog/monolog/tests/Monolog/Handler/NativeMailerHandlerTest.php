@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Handler;
 
 use Monolog\TestCase;
@@ -22,6 +21,7 @@ function mail($to, $subject, $message, $additional_headers = null, $additional_p
 
 class NativeMailerHandlerTest extends TestCase
 {
+
     protected function setUp()
     {
         $GLOBALS['mail'] = array();
@@ -50,7 +50,9 @@ class NativeMailerHandlerTest extends TestCase
     public function testSetterArrayHeaderInjection()
     {
         $mailer = new NativeMailerHandler('spammer@example.org', 'dear victim', 'receiver@example.org');
-        $mailer->addHeader(array("Content-Type: text/html\r\nFrom: faked@attacker.org"));
+        $mailer->addHeader(array(
+            "Content-Type: text/html\r\nFrom: faked@attacker.org"
+        ));
     }
 
     /**
@@ -76,13 +78,13 @@ class NativeMailerHandlerTest extends TestCase
         $to = 'spammer@example.org';
         $subject = 'dear victim';
         $from = 'receiver@example.org';
-
+        
         $mailer = new NativeMailerHandler($to, $subject, $from);
         $mailer->handleBatch(array());
-
+        
         // batch is empty, nothing sent
         $this->assertEmpty($GLOBALS['mail']);
-
+        
         // non-empty batch
         $mailer->handle($this->getRecord(Logger::ERROR, "Foo\nBar\r\n\r\nBaz"));
         $this->assertNotEmpty($GLOBALS['mail']);

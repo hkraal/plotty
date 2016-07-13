@@ -8,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Monolog\Processor;
 
 /**
@@ -18,6 +17,7 @@ namespace Monolog\Processor;
  */
 class TagProcessor
 {
+
     private $tags;
 
     public function __construct(array $tags = array())
@@ -38,7 +38,7 @@ class TagProcessor
     public function __invoke(array $record)
     {
         $record['extra']['tags'] = $this->tags;
-
+        
         return $record;
     }
 }

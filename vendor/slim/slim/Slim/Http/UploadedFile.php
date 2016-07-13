@@ -23,6 +23,7 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class UploadedFile implements UploadedFileInterface
 {
+
     /**
      * The client-provided full path to the file
      *
@@ -31,42 +32,49 @@ class UploadedFile implements UploadedFileInterface
      * @var string
      */
     public $file;
+
     /**
      * The client-provided file name.
      *
      * @var string
      */
     protected $name;
+
     /**
      * The client-provided media type of the file.
      *
      * @var string
      */
     protected $type;
+
     /**
      * The size of the file in bytes.
      *
      * @var int
      */
     protected $size;
+
     /**
      * A valid PHP UPLOAD_ERR_xxx code for the file upload.
      *
      * @var int
      */
     protected $error = UPLOAD_ERR_OK;
+
     /**
      * Indicates if the upload is from a SAPI environment.
      *
      * @var bool
      */
     protected $sapi = false;
+
     /**
      * An optional StreamInterface wrapping the file resource.
      *
      * @var StreamInterface
      */
     protected $stream;
+
     /**
      * Indicates if the uploaded file has already been moved.
      *
@@ -77,8 +85,9 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Create a normalized tree of UploadedFile instances from the Environment.
      *
-     * @param Environment $env The environment
-     *
+     * @param Environment $env
+     *            The environment
+     *            
      * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
      */
     public static function createFromEnvironment(Environment $env)
@@ -88,38 +97,33 @@ class UploadedFile implements UploadedFileInterface
         } elseif (isset($_FILES)) {
             return static::parseUploadedFiles($_FILES);
         }
-
+        
         return [];
     }
 
     /**
-     * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
+     * Parse a non-normalized, i.e.
+     * $_FILES superglobal, tree of uploaded file data.
      *
-     * @param array $uploadedFiles The non-normalized tree of uploaded file data.
-     *
+     * @param array $uploadedFiles
+     *            The non-normalized tree of uploaded file data.
+     *            
      * @return array A normalized tree of UploadedFile instances.
      */
     private static function parseUploadedFiles(array $uploadedFiles)
     {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {
-            if (!isset($uploadedFile['error'])) {
+            if (! isset($uploadedFile['error'])) {
                 if (is_array($uploadedFile)) {
                     $parsed[$field] = static::parseUploadedFiles($uploadedFile);
                 }
                 continue;
             }
-
+            
             $parsed[$field] = [];
-            if (!is_array($uploadedFile['error'])) {
-                $parsed[$field] = new static(
-                    $uploadedFile['tmp_name'],
-                    isset($uploadedFile['name']) ? $uploadedFile['name'] : null,
-                    isset($uploadedFile['type']) ? $uploadedFile['type'] : null,
-                    isset($uploadedFile['size']) ? $uploadedFile['size'] : null,
-                    $uploadedFile['error'],
-                    true
-                );
+            if (! is_array($uploadedFile['error'])) {
+                $parsed[$field] = new static($uploadedFile['tmp_name'], isset($uploadedFile['name']) ? $uploadedFile['name'] : null, isset($uploadedFile['type']) ? $uploadedFile['type'] : null, isset($uploadedFile['size']) ? $uploadedFile['size'] : null, $uploadedFile['error'], true);
             } else {
                 $subArray = [];
                 foreach ($uploadedFile['error'] as $fileIdx => $error) {
@@ -129,24 +133,30 @@ class UploadedFile implements UploadedFileInterface
                     $subArray[$fileIdx]['tmp_name'] = $uploadedFile['tmp_name'][$fileIdx];
                     $subArray[$fileIdx]['error'] = $uploadedFile['error'][$fileIdx];
                     $subArray[$fileIdx]['size'] = $uploadedFile['size'][$fileIdx];
-
+                    
                     $parsed[$field] = static::parseUploadedFiles($subArray);
                 }
             }
         }
-
+        
         return $parsed;
     }
 
     /**
      * Construct a new UploadedFile instance.
      *
-     * @param string      $file The full path to the uploaded file provided by the client.
-     * @param string|null $name The file name.
-     * @param string|null $type The file media type.
-     * @param int|null    $size The file size in bytes.
-     * @param int         $error The UPLOAD_ERR_XXX code representing the status of the upload.
-     * @param bool        $sapi Indicates if the upload is in a SAPI environment.
+     * @param string $file
+     *            The full path to the uploaded file provided by the client.
+     * @param string|null $name
+     *            The file name.
+     * @param string|null $type
+     *            The file media type.
+     * @param int|null $size
+     *            The file size in bytes.
+     * @param int $error
+     *            The UPLOAD_ERR_XXX code representing the status of the upload.
+     * @param bool $sapi
+     *            Indicates if the upload is in a SAPI environment.
      */
     public function __construct($file, $name = null, $type = null, $size = null, $error = UPLOAD_ERR_OK, $sapi = false)
     {
@@ -172,7 +182,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @return StreamInterface Stream representation of the uploaded file.
      * @throws \RuntimeException in cases when no stream is available or can be
-     *     created.
+     *         created.
      */
     public function getStream()
     {
@@ -182,7 +192,7 @@ class UploadedFile implements UploadedFileInterface
         if ($this->stream === null) {
             $this->stream = new Stream(fopen($this->file, 'r'));
         }
-
+        
         return $this->stream;
     }
 
@@ -214,44 +224,45 @@ class UploadedFile implements UploadedFileInterface
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
      *
-     * @param string $targetPath Path to which to move the uploaded file.
-     *
+     * @param string $targetPath
+     *            Path to which to move the uploaded file.
+     *            
      * @throws InvalidArgumentException if the $path specified is invalid.
      * @throws RuntimeException on any error during the move operation, or on
-     *     the second or subsequent call to the method.
+     *         the second or subsequent call to the method.
      */
     public function moveTo($targetPath)
     {
         if ($this->moved) {
             throw new RuntimeException('Uploaded file already moved');
         }
-
-        if (!is_writable(dirname($targetPath))) {
+        
+        if (! is_writable(dirname($targetPath))) {
             throw new InvalidArgumentException('Upload target path is not writable');
         }
-
+        
         $targetIsStream = strpos($targetPath, '://') > 0;
         if ($targetIsStream) {
-            if (!copy($this->file, $targetPath)) {
+            if (! copy($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %1s to %2s', $this->name, $targetPath));
             }
-            if (!unlink($this->file)) {
+            if (! unlink($this->file)) {
                 throw new RuntimeException(sprintf('Error removing uploaded file %1s', $this->name));
             }
         } elseif ($this->sapi) {
-            if (!is_uploaded_file($this->file)) {
+            if (! is_uploaded_file($this->file)) {
                 throw new RuntimeException(sprintf('%1s is not a valid uploaded file', $this->file));
             }
-
-            if (!move_uploaded_file($this->file, $targetPath)) {
+            
+            if (! move_uploaded_file($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %1s to %2s', $this->name, $targetPath));
             }
         } else {
-            if (!rename($this->file, $targetPath)) {
+            if (! rename($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %1s to %2s', $this->name, $targetPath));
             }
         }
-
+        
         $this->moved = true;
     }
 
@@ -286,7 +297,7 @@ class UploadedFile implements UploadedFileInterface
      * the file in the $_FILES array.
      *
      * @return string|null The filename sent by the client or null if none
-     *     was provided.
+     *         was provided.
      */
     public function getClientFilename()
     {
@@ -304,7 +315,7 @@ class UploadedFile implements UploadedFileInterface
      * the file in the $_FILES array.
      *
      * @return string|null The media type sent by the client or null if none
-     *     was provided.
+     *         was provided.
      */
     public function getClientMediaType()
     {
