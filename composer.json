@@ -1,25 +1,27 @@
 {
-	"name": "slim/slim-skeleton",
-	"description": "A Slim Framework skeleton application for rapid development",
+	"name": "cosmic-code/plotty",
+	"description": "a wormhole probing tool for EVE-Online players",
 	"keywords": [
-		"microframework",
-		"rest",
-		"router",
-		"psr7"
+		"eve-online",
+		"probing",
+		"wormhole",
+		"plotty"
 	],
-	"homepage": "http://github.com/slimphp/Slim-Skeleton",
-	"license": "MIT",
+	"homepage": "https://github.com/cosmic-code/plotty",
+	"license": "AGPLv3",
 	"authors": [
 		{
-			"name": "Josh Lockhart",
-			"email": "info@joshlockhart.com",
-			"homepage": "http://www.joshlockhart.com/"
+			"name": "Team Cosmic Code",
+			"email": "jaap-willem.dooge@outlook.com",
+			"homepage": "https://github.com/cosmic-code"
 		}
 	],
 	"require": {
 		"php": ">=5.5.0",
 		"slim/slim": "^3.1",
 		"slim/php-view": "^2.0",
-		"monolog/monolog": "^1.17"
+		"monolog/monolog": "^1.17",
+		"3rdpartyeve/phealng": "2.3.4",
+		"twig/twig": "~1.0"
 	}
 }
