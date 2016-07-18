@@ -22,6 +22,7 @@
 		"slim/php-view": "^2.0",
 		"monolog/monolog": "^1.17",
 		"3rdpartyeve/phealng": "2.3.4",
-		"twig/twig": "~1.0"
+		"twig/twig": "~1.0",
+		"slim/twig-view": "^2.1"
 	}
 }
