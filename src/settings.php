@@ -11,7 +11,7 @@ return [
         
         // Monolog settings
         'logger' => [
-            'name' => 'slim-app',
+            'name' => 'plotty',
             'path' => __DIR__ . '/../logs/app.log'
         ]
     ]
